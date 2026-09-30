@@ -444,7 +444,7 @@
 
     <section class="s on" id="intro">
       <h1>¿Salimos?</h1>
-      <p class="sub">Tengo una propuesta. Incluye día, hora y algo rico.</p>
+      <p class="sub">Elegite algo lindo y rico.</p>
       <div class="arena">
         <button class="btn big" id="si">Sí</button>
         <button class="btn g big" id="no">No</button>
@@ -453,24 +453,24 @@
 
     <section class="s" id="cuando">
       <h2>¿Cuándo estás libre?</h2>
-      <p class="sub">Elegí un día y una hora.</p>
+      <p class="sub">Elegite el día y la hora.</p>
       <div class="cal-h"><button id="prev" aria-label="Mes anterior">‹</button><b id="mes"></b><button id="next"
           aria-label="Mes siguiente">›</button></div>
       <div class="grid" id="cal"></div>
       <div id="clima"></div>
       <div class="chips" id="horas"></div>
-      <button class="btn" id="a-vibe" disabled>Seguir</button>
+      <button class="btn" id="a-vibe" disabled>Vamo</button>
     </section>
 
     <section class="s" id="vibe">
-      <h2>¿Qué nos pinta?</h2>
-      <p class="sub">Elegí el plan.</p>
+      <h2>¿Qué te pinta hacer juntos?</h2>
+      <p class="sub">Elegite un plancito.</p>
       <div class="cards" id="cards"></div>
     </section>
 
     <section class="s" id="ruleta">
-      <h2 id="rt">La ruleta</h2>
-      <p class="sub">Cualquiera de estas opciones me gusta. Elegí sin miedo.</p>
+      <h2 id="rt">Chann</h2>
+      <p class="sub">Tira sin miedo las veces que quieras.</p>
       <div class="reel">
         <div class="win">
           <div id="strip"></div>
@@ -479,31 +479,31 @@
       <div id="pick"></div>
       <div class="row">
         <button class="btn" id="girar">Girar</button>
-        <button class="btn g" id="otro" hidden>Otro</button>
-        <button class="btn" id="dale" hidden>Dale, esa</button>
+        <button class="btn g" id="otro" hidden>Otroo</button>
+        <button class="btn" id="dale" hidden>Esaa</button>
       </div>
-      <input id="propio" placeholder="¿Y si elegís vos? Escribí tu lugar" maxlength="80">
+      <input id="propio" placeholder="Ooooo elegite vos un lugarcito" maxlength="80">
     </section>
 
     <section class="s" id="pregunta">
-      <h2>Antes de confirmar</h2>
-      <p class="sub">Si querés decirme algo, este es el lugar. Podés dejarlo vacío.</p>
+      <h2>Wait a second...</h2>
+      <p class="sub">No sé si querés agregar algo para que sepa, sino dejalo chill.</p>
       <textarea id="evitar" rows="3" maxlength="200"></textarea>
-      <div class="row"><button class="btn" id="a-res">Ver resumen</button></div>
+      <div class="row"><button class="btn" id="a-res">A verrr</button></div>
     </section>
 
     <section class="s" id="resumen">
-      <h2>Así quedó</h2>
+      <h2>Ahí quedó</h2>
       <div class="ticket" id="ticket"></div>
       <div id="map"></div>
       <div id="err"></div>
-      <button class="btn" id="enviar">Confirmar</button>
+      <button class="btn" id="enviar">Lito</button>
     </section>
 
     <section class="s" id="fin">
       <canvas id="heart" width="640" height="640"></canvas>
-      <h2>Confirmado</h2>
-      <p class="sub">Ya me llegó. Nos vemos.</p>
+      <h2>Ya quedó todo chill</h2>
+      <p class="sub">Viste que original? Bueno, ahí me llegó tu respuesta.</p>
     </section>
 
   </main>
@@ -514,22 +514,35 @@
        c:[lat,lng] = ubicación (opcional). Sin c no se muestra mapa. */
     const EMAIL = 'facundoher2009@gmail.com';
     /* ═════ LUGARES ═════
-     n = nombre · t = tipos (cafe, helado, almuerzo, pasear) · z = zona (opcional; el combo busca el 2.º lugar en la misma zona)
-     c = coordenadas [lat,lng]. Sacalas de Google Maps: clic derecho sobre el lugar → primer renglón del menú
-         (ej. -32.8895, -68.8458) → clic para copiar → pegalo entre corchetes: c:[-32.8895,-68.8458]
-     Con c:null simplemente no se muestra mapa. */
+     n = nombre · t = tipos (cafe, helado, almuerzo, pasear)
+     s = sedes: una por cada local. z = zona (palmares, shopping, centro, parque… o '' si está suelto) y c = coordenadas [lat,lng].
+     · Si un lugar está en varios sitios (ej. Nipoti), poné una sede por sitio. Borrá las que no existan.
+     · En el combo, si caminan por Palmares, el segundo lugar sale de las sedes con z:'palmares' (y el mapa marca esa sede).
+     · Coords: Google Maps → clic derecho sobre el lugar → primer renglón del menú (ej. -32.8895, -68.8458) → clic para copiar
+       → pegalo entre corchetes: c:[-32.8895,-68.8458]. Con c:null no se muestra mapa. */
     const LUGARES = [
-      { n: 'Bastante', t: ['cafe'], z: '', c: null },
-      { n: 'Nipoti', t: ['cafe', 'almuerzo'], z: '', c: null },
-      { n: 'Innamorato', t: ['helado'], z: '', c: null },
-      { n: 'Freddo', t: ['helado'], z: '', c: null },
-      { n: "Lucciano's", t: ['helado'], z: 'palmares', c: null },
-      { n: 'Aristides', t: ['almuerzo'], z: '', c: null },
-      { n: 'Palmares', t: ['pasear', 'almuerzo'], z: 'palmares', c: null },
-      { n: 'El centro', t: ['pasear'], z: 'centro', c: null },
-      { n: 'El parque', t: ['pasear'], z: 'parque', c: null },
-      { n: 'Shopping', t: ['pasear'], z: '', c: null }
+      /* café */
+      { n: 'Nipoti', t: ['cafe', 'almuerzo'], s: [{ z: 'palmares', c: [-32.95584746621618, -68.85904818858553] }, { z: 'shopping', c: [-32.90191457378276, -68.79745739752724] }, { z: '', c: null }] },
+      { n: 'Bastante', t: ['cafe'], s: [{ z: '', c: [-32.89293887424592, -68.85045083628803] }] },
+      { n: 'Vicolo', t: ['cafe'], s: [{ z: '', c: [-32.95534393531328, -68.85964042159314] }] },
+      { n: 'Shelby', t: ['cafe'], s: [{ z: '', c: [-32.95691473344564, -68.85905400203069] }] },
+      /* helado */
+      { n: 'Innamorato', t: ['helado'], s: [{ z: 'palmares', c: [-32.95565247606893, -68.8599245750931] }, { z: 'shopping', c: [-32.900229002112596, -68.79939271345168] }, { z: '', c: null }] },
+      { n: 'Freddo', t: ['helado'], s: [{ z: '', c: [-32.9551714868912, -68.8591763683469] }] },
+      { n: "Lucciano's", t: ['helado'], s: [{ z: 'palmares', c: [-32.9544306933975, -68.85855893661481] }] },
+      { n: 'Michel', t: ['helado'], s: [{ z: '', c: [-32.8912241130229, -68.85069647264518] }] },
+      /* almorzar (Nipoti ya cuenta) */
+      { n: 'Zitto', t: ['almuerzo'], s: [{ z: '', c: [-32.954516887353456, -68.85867155333239] }] },
+      /* pasear */
+      { n: 'Parque San Martín', t: ['pasear'], s: [{ z: 'parque', c: [-32.88972839095912, -68.87004388858838] }] },
+      { n: 'Shopping', t: ['pasear'], s: [{ z: 'shopping', c: [-32.90186960206693, -68.79752174811053] }] },
+      { n: 'Centro', t: ['pasear'], s: [{ z: 'centro', c: [-32.89188836239528, -68.84839077988386] }] },
+      { n: 'Palmares', t: ['pasear'], s: [{ z: 'palmares', c: [-32.95588347604527, -68.859016002078] }] },
+      { n: 'Barraca', t: ['pasear'], s: [{ z: '', c: [-32.915783367321374, -68.82197395776589] }] }
     ];
+    const cap = z => z ? z[0].toUpperCase() + z.slice(1) : '';
+    const coordsDe = (n, z) => { const l = LUGARES.find(x => x.n === n); if (!l) return []; let ss = l.s; if (z) { const m = ss.filter(x => x.z === z); if (m.length) ss = m } return ss.filter(x => x.c).map(x => x.c) };
+    const etiqueta = (n, i) => { const l = LUGARES.find(x => x.n === n); return i === 1 && S.zona && l && l.s.some(x => x.z === S.zona) ? `${n} (${cap(S.zona)})` : n };
     const CATS = [
       { id: 'cafe', e: '☕', n: 'Café' }, { id: 'helado', e: '🍦', n: 'Helado' },
       { id: 'almuerzo', e: '🍽️', n: 'Almorzar' }, { id: 'pasear', e: '🌳', n: 'Pasear' },
@@ -641,7 +654,7 @@
       $$('#cards button').forEach(b => b.onclick = () => elegir(b.dataset.c));
     }
     function elegir(id) {
-      S.cat = CATS.find(c => c.id === id); S.picks = []; S.fi = 0;
+      S.cat = CATS.find(c => c.id === id); S.picks = []; S.fi = 0; S.zona = '';
       S.fases = id === 'combo' ? [{ t: 'Primero, a caminar', n: nombres(l => l.t.includes('pasear')) }, { t: 'Después, algo rico', n: nombres(l => l.t.includes('helado') || l.t.includes('cafe')) }]
         : id === 'sorpresa' ? [{ t: 'Sorpresa', n: nombres(l => l.t.some(t => t !== 'almuerzo' || !tarde())) }]
           : [{ t: 'La ruleta', n: nombres(l => l.t.includes(id)) }];
@@ -650,7 +663,7 @@
     function fase() {
       const f = S.fases[S.fi]; S.names = f.n; S.cur = '';
       if (S.cat.id === 'combo' && S.fi === 1) { // el segundo lugar, cerca del primero (si hay opciones en esa zona)
-        const z = (LUGARES.find(l => l.n === S.picks[0]) || {}).z, cerca = z ? nombres(l => l.z === z && (l.t.includes('helado') || l.t.includes('cafe'))) : [];
+        const z = S.zona, cerca = z ? nombres(l => (l.t.includes('helado') || l.t.includes('cafe')) && l.s.some(x => x.z === z)) : [];
         if (cerca.length > 1) S.names = cerca
       }
       $('#rt').textContent = f.t; $('#pick').textContent = '';
@@ -669,24 +682,25 @@
       setTimeout(() => { gira = false; S.cur = S.names[k]; $('#pick').textContent = 'Toca: ' + S.cur; $('#otro').hidden = $('#dale').hidden = false }, matchMedia('(prefers-reduced-motion:reduce)').matches ? 50 : 3700);
     }
     $('#girar').onclick = $('#otro').onclick = girar;
-    $('#dale').onclick = () => { S.picks[S.fi] = S.cur; if (S.fi < S.fases.length - 1) { S.fi++; fase() } else go('pregunta') };
+    $('#dale').onclick = () => { S.picks[S.fi] = S.cur; if (S.cat.id === 'combo' && S.fi === 0) S.zona = ((LUGARES.find(l => l.n === S.cur) || { s: [{}] }).s[0].z) || ''; if (S.fi < S.fases.length - 1) { S.fi++; fase() } else go('pregunta') };
 
     /* ───────── RESUMEN + ENVÍO ───────── */
     let mapa;
     $('#a-res').onclick = () => {
-      S.evitar = $('#evitar').value.trim(); S.propio = $('#propio').value.trim(); S.lugar = S.picks.join(' + ');
+      S.evitar = $('#evitar').value.trim(); S.propio = $('#propio').value.trim(); S.lugar = S.picks.map(etiqueta).join(' + ');
       S.fecha = S.dia.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
       $('#ticket').innerHTML = `<p><b>Día:</b> ${S.fecha}</p><p><b>Hora:</b> ${S.hora}</p><p><b>Plan:</b> ${S.cat.n}</p><p><b>Lugar:</b> ${S.lugar}${S.propio ? ` (o tu idea: ${S.propio})` : ''}</p>${S.clima ? `<p><b>Clima:</b> ${S.clima}</p>` : ''}${S.evitar ? `<p><b>Mensaje:</b> ${S.evitar}</p>` : ''}`;
       go('resumen');
-      const pts = S.picks.map(n => LUGARES.find(x => x.n === n && x.c)).filter(Boolean), m = $('#map'), ver = pts.length && window.L;
+      const pts = S.picks.flatMap((n, i) => coordsDe(n, i === 1 ? S.zona : '')), m = $('#map'), ver = pts.length && window.L;
       m.style.display = ver ? 'block' : 'none';
       if (ver) {
         if (mapa) mapa.remove(); mapa = L.map('map');
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { subdomains: 'abcd', maxZoom: 19, attribution: '© OpenStreetMap © CARTO' }).addTo(mapa);
-        pts.forEach(p => L.marker(p.c).addTo(mapa));
-        pts.length > 1 ? mapa.fitBounds(pts.map(p => p.c), { padding: [30, 30] }) : mapa.setView(pts[0].c, 15)
+        pts.forEach(c => L.marker(c).addTo(mapa));
+        pts.length > 1 ? mapa.fitBounds(pts, { padding: [30, 30], maxZoom: 16 }) : mapa.setView(pts[0], 15)
       }
     };
+
     const W3KEY = ''; // opcional: clave gratis de web3forms.com; si la ponés, se usa en vez de FormSubmit
     const cuerpo = () => ({ dia: S.fecha, hora: S.hora, plan: S.cat.n, lugar: S.lugar, lugar_propio: S.propio || '-', mensaje: S.evitar || '-', clima: (S.clima || '-') + ' | ' + (S.luna || '') });
     $('#enviar').onclick = async () => {
