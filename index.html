@@ -5,24 +5,20 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>¿Salimos?</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
     :root {
-      --noche: #17100a;
-      --caja: rgba(38, 26, 17, .86);
-      --amarillo: #ffd23f;
-      --naranja: #ff8a3d;
-      --crema: #fff4dc;
-      --suave: #b9a98f;
+      --noche: #fff9e6;
+      --caja: rgba(255, 255, 255, 0.85);
+      --amarillo: #e67300;
+      --naranja: #ff5e00;
+      --crema: #3d2616;
+      --suave: #8c7362;
       --r: 18px
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0
-    }
+    * { box-sizing: border-box; margin: 0 }
 
     body {
       background: var(--noche);
@@ -32,407 +28,195 @@
       padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom)
     }
 
-    h1,
-    h2 {
+    h1, h2 {
       font-family: 'Fraunces', Georgia, serif;
       font-weight: 700;
       line-height: 1.15;
       color: var(--amarillo)
     }
 
-    h1 {
-      font-size: 2.4rem
-    }
+    h1 { font-size: 2.4rem }
+    h2 { font-size: 1.6rem; margin-bottom: 6px }
 
-    h2 {
-      font-size: 1.6rem;
-      margin-bottom: 6px
-    }
+    p.sub { color: var(--suave); margin-bottom: 18px }
 
-    p.sub {
-      color: var(--suave);
-      margin-bottom: 18px
-    }
-
-    #stars {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none
-    }
+    #stars { position: fixed; inset: 0; z-index: 0; pointer-events: none }
 
     main {
-      position: relative;
-      z-index: 1;
-      max-width: 460px;
-      min-height: 100vh;
-      margin: 0 auto;
-      padding: 24px 16px;
-      display: flex;
-      flex-direction: column;
+      position: relative; z-index: 1; max-width: 460px; min-height: 100vh;
+      margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column;
       justify-content: center
     }
 
-    #intro {
-      backdrop-filter: none;
-      -webkit-backdrop-filter: none
-    }
+    #intro { backdrop-filter: none; -webkit-backdrop-filter: none }
 
     .s {
-      display: none;
-      background: var(--caja);
-      border: 1px solid rgba(255, 210, 63, .22);
-      border-radius: var(--r);
-      padding: 26px 20px;
-      backdrop-filter: blur(8px);
+      display: none; background: var(--caja);
+      border: 1px solid rgba(230, 115, 0, .15);
+      border-radius: var(--r); padding: 26px 20px;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(230, 115, 0, 0.06);
       text-align: center
     }
 
-    .s.on {
-      display: block
-    }
+    .s.on { display: block }
 
     .btn {
-      font: 600 1rem 'Fraunces', Georgia, serif;
-      border: 0;
-      border-radius: 999px;
-      padding: 12px 26px;
-      cursor: pointer;
-      color: #1c1209;
-      background: linear-gradient(135deg, var(--amarillo), var(--naranja))
+      font: 600 1rem 'Fraunces', Georgia, serif; border: 0; border-radius: 999px;
+      padding: 12px 26px; cursor: pointer; color: #ffffff;
+      background: linear-gradient(135deg, #ffb703, var(--naranja));
+      box-shadow: 0 4px 12px rgba(255, 94, 0, 0.25); transition: transform 0.2s;
     }
 
-    .btn:disabled {
-      opacity: .35;
-      cursor: default
-    }
+    .btn:hover:not(:disabled) { transform: scale(1.05); }
+    .btn:disabled { opacity: .4; cursor: default; box-shadow: none; transform: none; }
 
     .btn.g {
-      background: none;
-      color: var(--crema);
-      border: 1px solid var(--suave)
+      background: #ffffff; color: var(--amarillo);
+      border: 2px solid var(--amarillo); box-shadow: none;
     }
 
-    button:focus-visible,
-    input:focus-visible,
-    textarea:focus-visible {
-      outline: 2px solid var(--amarillo);
-      outline-offset: 2px
+    button:focus-visible, input:focus-visible, textarea:focus-visible {
+      outline: 2px solid var(--naranja); outline-offset: 2px
     }
 
-    .big {
-      font-size: 1.3rem;
-      padding: 16px 38px
-    }
+    .big { font-size: 1.3rem; padding: 16px 38px }
 
-    .arena {
-      display: flex;
-      justify-content: center;
-      gap: 24px;
-      margin-top: 26px
-    }
-
-    #no {
-      z-index: 5;
-      transition: left .25s, top .25s
-    }
+    .arena { display: flex; justify-content: center; gap: 24px; margin-top: 26px }
+    #no { z-index: 5; transition: left .25s, top .25s }
 
     .cal-h {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      font-family: 'Fraunces', Georgia, serif
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 8px; font-family: 'Fraunces', Georgia, serif
     }
 
     .cal-h button {
-      background: none;
-      border: 0;
-      color: var(--amarillo);
-      font-size: 1.4rem;
-      cursor: pointer;
-      padding: 4px 12px
+      background: none; border: 0; color: var(--amarillo);
+      font-size: 1.4rem; cursor: pointer; padding: 4px 12px; transition: 0.2s;
     }
+    .cal-h button:hover { transform: scale(1.2); color: var(--naranja); }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 4px
-    }
-
-    .grid span {
-      font-size: .75rem;
-      color: var(--suave)
-    }
+    .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px }
+    .grid span { font-size: .75rem; color: var(--suave); font-weight: 600; margin-bottom: 4px; }
 
     .grid button {
-      aspect-ratio: 1;
-      border: 0;
-      border-radius: 10px;
-      background: rgba(255, 240, 210, .06);
-      color: var(--crema);
-      cursor: pointer
+      aspect-ratio: 1; border: 1px solid rgba(230, 115, 0, .15); border-radius: 10px;
+      background: #ffffff; color: var(--crema); cursor: pointer;
+      box-shadow: 0 2px 5px rgba(230, 115, 0, 0.05); transition: 0.2s; font-size: 0.95rem;
     }
 
-    .grid button:disabled {
-      opacity: .25;
-      cursor: default
+    .grid button:not(:disabled):hover {
+      border-color: var(--naranja); transform: scale(1.1); z-index: 2;
+      box-shadow: 0 4px 10px rgba(255, 94, 0, 0.15); color: var(--naranja); font-weight: bold;
     }
 
-    .grid button.sel,
-    .chips button.sel {
-      background: linear-gradient(135deg, var(--amarillo), var(--naranja));
-      color: #1c1209;
-      font-weight: 700
+    .grid button:disabled { opacity: .25; cursor: default; background: transparent; box-shadow: none; border-color: transparent; }
+
+    .grid button.sel, .chips button.sel {
+      background: linear-gradient(135deg, #ffb703, var(--naranja));
+      color: #ffffff !important; font-weight: 700; border: none; box-shadow: 0 4px 10px rgba(255, 94, 0, 0.25);
     }
 
-    #clima {
-      min-height: 1.5em;
-      margin: 10px 0;
-      color: var(--amarillo);
-      font-size: .95rem
-    }
+    #clima { min-height: 1.5em; margin: 12px 0; color: var(--amarillo); font-size: .95rem }
 
-    .chips {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      margin-bottom: 18px
-    }
-
+    .chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 18px }
     .chips button {
-      border: 1px solid rgba(255, 210, 63, .3);
-      border-radius: 10px;
-      background: none;
-      color: var(--crema);
-      padding: 8px 0;
-      cursor: pointer
+      border: 1px solid rgba(230, 115, 0, .15); border-radius: 10px;
+      background: #ffffff; color: var(--crema); padding: 10px 0; cursor: pointer;
+      box-shadow: 0 2px 5px rgba(230, 115, 0, 0.05); transition: 0.2s; font-weight: 500;
     }
 
-    .cards {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px
+    .chips button:not(:disabled):hover {
+      border-color: var(--naranja); transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(255, 94, 0, 0.12); color: var(--naranja);
     }
 
+    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px }
     .cards button {
-      background: rgba(255, 240, 210, .07);
-      border: 1px solid rgba(255, 210, 63, .2);
-      border-radius: 14px;
-      color: var(--crema);
-      padding: 18px 6px;
-      cursor: pointer;
-      font: 500 1rem 'Fraunces', Georgia, serif;
-      transition: transform .15s, border-color .15s
+      background: #ffffff; border: 2px solid transparent; border-radius: 14px;
+      color: var(--crema); padding: 22px 6px; cursor: pointer;
+      font: 500 1.05rem 'Fraunces', Georgia, serif; transition: all .2s ease;
+      box-shadow: 0 4px 12px rgba(230, 115, 0, 0.06);
     }
 
     .cards button:hover {
-      transform: translateY(-2px);
-      border-color: var(--naranja)
+      transform: translateY(-5px); border-color: var(--naranja);
+      box-shadow: 0 10px 20px rgba(255, 94, 0, 0.15);
     }
 
-    .cards i {
-      display: block;
-      font-style: normal;
-      font-size: 1.9rem;
-      margin-bottom: 4px
-    }
+    .cards i { display: block; font-style: normal; font-size: 2.4rem; margin-bottom: 8px }
+    .cards small { display: block; font: 400 .75rem system-ui, sans-serif; color: var(--suave); margin-top: 4px }
 
-    .reel {
-      position: relative;
-      margin: 14px 0
-    }
-
+    .reel { position: relative; margin: 14px 0 }
     .win {
-      height: 168px;
-      overflow: hidden;
+      height: 168px; overflow: hidden;
       -webkit-mask-image: linear-gradient(transparent, #000 32%, #000 68%, transparent);
       mask-image: linear-gradient(transparent, #000 32%, #000 68%, transparent)
     }
 
-    #strip {
-      transition: transform 3.6s cubic-bezier(.15, .7, .1, 1)
-    }
-
+    #strip { transition: transform 3.6s cubic-bezier(.15, .7, .1, 1) }
     .it {
-      height: 56px;
-      line-height: 56px;
-      font: 500 1.4rem/56px 'Fraunces', Georgia, serif;
-      color: var(--crema);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding: 0 10px
+      height: 56px; line-height: 56px; font: 500 1.4rem/56px 'Fraunces', Georgia, serif;
+      color: var(--crema); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px
     }
 
     .reel::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 56px;
-      height: 56px;
-      border-block: 2px solid var(--amarillo);
-      background: rgba(255, 210, 63, .09);
-      pointer-events: none;
-      border-radius: 6px
+      content: ''; position: absolute; left: 0; right: 0; top: 56px; height: 56px;
+      border-block: 2px solid var(--amarillo); background: rgba(230, 115, 0, .05);
+      pointer-events: none; border-radius: 6px
     }
 
-    #pick {
-      font: 700 1.3rem 'Fraunces', Georgia, serif;
-      min-height: 1.8em;
-      color: var(--crema)
-    }
+    #pick { font: 700 1.3rem 'Fraunces', Georgia, serif; min-height: 1.8em; color: var(--amarillo) }
+    .row { display: flex; gap: 10px; justify-content: center; margin: 12px 0; flex-wrap: wrap }
 
-    .row {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin: 12px 0;
-      flex-wrap: wrap
-    }
-
-    input,
-    textarea {
-      width: 100%;
-      background: rgba(255, 240, 210, .07);
-      border: 1px solid rgba(255, 210, 63, .25);
-      border-radius: 12px;
-      color: var(--crema);
-      padding: 10px 12px;
-      font: inherit;
-      margin-top: 8px
+    input, textarea {
+      width: 100%; background: #ffffff; border: 1px solid rgba(230, 115, 0, .25);
+      border-radius: 12px; color: var(--crema); padding: 12px 14px;
+      font: inherit; margin-top: 8px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
     }
 
     .ticket {
-      text-align: left;
-      border: 1px dashed var(--amarillo);
-      border-radius: 14px;
-      padding: 16px;
-      margin: 14px 0
+      text-align: left; border: 2px dashed var(--amarillo); border-radius: 14px;
+      padding: 16px; margin: 14px 0; background: #ffffff; box-shadow: 0 4px 12px rgba(230, 115, 0, 0.05);
     }
 
-    .ticket b {
-      color: var(--amarillo);
-      font-weight: 600
-    }
-
-    #map {
-      height: 170px;
-      border-radius: 12px;
-      margin-bottom: 14px;
-      display: none
-    }
-
-    #err {
-      color: #ff8a8a;
-      min-height: 1.4em;
-      font-size: .9rem
-    }
-
-    #heart {
-      width: 100%;
-      max-width: 320px;
-      height: auto
-    }
-
-    #clima {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center
-    }
+    .ticket b { color: var(--amarillo); font-weight: 600 }
+    #map { height: 170px; border-radius: 12px; margin-bottom: 14px; display: none; box-shadow: 0 4px 12px rgba(230, 115, 0, 0.1); }
+    #err { color: #d63031; min-height: 1.4em; font-size: .9rem }
+    #heart { width: 100%; max-width: 320px; height: auto }
 
     .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border: 1px solid rgba(255, 210, 63, .3);
-      border-radius: 999px;
-      padding: 5px 12px;
-      margin: 3px;
-      font-size: .86rem;
-      color: var(--amarillo);
-      background: rgba(255, 210, 63, .06)
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid rgba(230, 115, 0, .25); border-radius: 999px;
+      padding: 5px 12px; margin: 3px; font-size: .86rem; color: var(--amarillo);
+      background: #ffffff; font-weight: 500;
     }
 
-    .chips button:disabled,
-    .cards button:disabled {
-      opacity: .3;
-      cursor: default;
-      transform: none
-    }
-
-    .cards small {
-      display: block;
-      font: 400 .75rem system-ui, sans-serif;
-      color: var(--suave);
-      margin-top: 2px
-    }
+    .chips button:disabled, .cards button:disabled { opacity: .3; cursor: default; transform: none; box-shadow: none; border-color: transparent; }
 
     #lunagrande {
-      display: none;
-      position: fixed;
-      right: 9vw;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 0;
-      color: #ffcf5a;
-      text-align: center;
-      opacity: .85;
-      filter: drop-shadow(0 0 30px rgba(255, 138, 61, .35));
-      pointer-events: none
+      display: none; position: fixed; right: 9vw; top: 50%; transform: translateY(-50%);
+      z-index: 0; color: #ffb703; text-align: center; opacity: .7;
+      filter: drop-shadow(0 0 30px rgba(255, 183, 3, .4)); pointer-events: none
     }
 
-    #lunagrande small {
-      display: block;
-      margin-top: 10px;
-      color: var(--suave);
-      font: 500 1rem 'Fraunces', Georgia, serif
-    }
+    #lunagrande small { display: block; margin-top: 10px; color: #e67300; font: 500 1rem 'Fraunces', Georgia, serif }
 
-    @media(min-width:1000px) {
-      #lunagrande {
-        display: block
-      }
-    }
+    @media(min-width:1000px) { #lunagrande { display: block } }
 
-    .s {
-      position: relative
-    }
-
+    .s { position: relative }
     .back {
-      position: absolute;
-      left: 10px;
-      top: 10px;
-      background: none;
-      border: 0;
-      color: var(--suave);
-      font: inherit;
-      font-size: .9rem;
-      cursor: pointer;
-      padding: 6px 8px
+      position: absolute; left: 10px; top: 10px; background: none; border: 0;
+      color: var(--suave); font: inherit; font-size: .9rem; cursor: pointer; padding: 6px 8px; font-weight: 500; transition: 0.2s;
     }
 
-    .back:hover {
-      color: var(--amarillo)
-    }
-
-    .back+h2 {
-      margin-top: 14px
-    }
-
-    #err a {
-      color: var(--amarillo)
-    }
+    .back:hover { color: var(--naranja); transform: translateX(-3px); }
+    .back+h2 { margin-top: 14px }
+    #err a { color: var(--amarillo); font-weight: 600; }
 
     @media(prefers-reduced-motion:reduce) {
-      #strip {
-        transition: none !important
-      }
-
-      #no {
-        transition: none
-      }
+      #strip { transition: none !important }
+      #no { transition: none }
     }
   </style>
 </head>
@@ -549,16 +333,14 @@
       { id: 'combo', e: '🚶', n: 'Caminar y algo rico' }, { id: 'sorpresa', e: '🎲', n: 'Sorpresa' }
     ];
 
-    const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-    const S = {};
-    const go = id => { $$('.s').forEach(e => e.classList.toggle('on', e.id === id)); scrollTo(0, 0) };
+    const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];     const S = {};     const go = id => { $$('.s').forEach(e => e.classList.toggle('on', e.id === id)); scrollTo(0, 0) };
 
     /* ───────── ESTRELLAS ───────── */
     (() => {
-      const c = $('#stars'), x = c.getContext('2d'), col = ['#ffd23f', '#ff8a3d', '#fff4dc']; let W, H, st = [];
+      const c = $('#stars'), x = c.getContext('2d'), col = ['#f77f00', '#d62828', '#fcbf49']; let W, H, st = [];
       const init = () => {
         W = c.width = innerWidth; H = c.height = innerHeight;
-        st = Array.from({ length: 320 }, () => ({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.3 + .3, c: col[Math.random() * 3 | 0], a: Math.random(), d: (Math.random() * .008 + .002) * (Math.random() < .5 ? 1 : -1) }))
+        st = Array.from({ length: 150 }, () => ({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 2.5 + 1.2, c: col[Math.random() * 3 | 0], a: Math.random(), d: (Math.random() * .008 + .002) * (Math.random() < .5 ? 1 : -1) }))
       };
       const draw = () => {
         x.clearRect(0, 0, W, H); for (const s of st) { s.a += s.d; if (s.a <= .05 || s.a >= 1) s.d *= -1; x.globalAlpha = Math.max(.05, Math.min(1, s.a)); x.fillStyle = s.c; x.beginPath(); x.arc(s.x, s.y, s.r, 0, 7); x.fill() }
@@ -600,7 +382,7 @@
     function faseLunar(d) { const c = 29.530588, dias = (Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 12) - Date.UTC(2000, 0, 6, 18, 14)) / 864e5, f = (((dias % c) + c) % c) / c; return { f, nombre: FASES[Math.floor(f * 8 + .5) % 8] } }
     function lunaSVG(f, px) {
       const g = f < .5 ? f : 1 - f, rx = (10 * Math.abs(Math.cos(2 * Math.PI * g))).toFixed(2), sw = g < .25 ? 0 : 1;
-      return `<svg viewBox="-11 -11 22 22" width="${px}" height="${px}" aria-hidden="true"><circle r="10" fill="#2a1c10" stroke="currentColor" stroke-width=".5"/><path d="M0 -10A10 10 0 0 1 0 10A${rx} 10 0 0 ${sw} 0 -10Z" fill="currentColor" transform="scale(${f < .5 ? -1 : 1} 1)"/></svg>`
+      return `<svg viewBox="-11 -11 22 22" width="${px}" height="${px}" aria-hidden="true"><circle r="10" fill="#fff9e6" stroke="currentColor" stroke-width=".5"/><path d="M0 -10A10 10 0 0 1 0 10A${rx} 10 0 0 ${sw} 0 -10Z" fill="currentColor" transform="scale(${f < .5 ? -1 : 1} 1)"/></svg>`
     }
     function lunaGrande(d) { const l = faseLunar(d); $('#lunagrande').innerHTML = lunaSVG(l.f, 220) + `<small>${l.nombre}</small>` }
     function cal() {
@@ -613,14 +395,8 @@
         h += `<button data-d="${iso(f)}" class="${sel ? 'sel' : ''}" ${f < hoy ? 'disabled' : ''}>${d}</button>`
       }
       $('#cal').innerHTML = h;
-      $$('#cal button:not(:disabled)').forEach(b => b.onclick = () => {
-        const [a, mm, dd] = b.dataset.d.split('-'); S.dia = new Date(a, mm - 1, dd); cal(); horas(); clima(); ok()
-      });
-    }
-    let tok = 0;
-    function horas() { // si el día es hoy, desactiva horarios que ya pasaron
-      const n = new Date(), hoyOk = S.dia && +S.dia === +hoy;
-      $$('#horas button').forEach(b => {
+      $$('#cal button:not(:disabled)').forEach(b => b.onclick = () => {         const [a, mm, dd] = b.dataset.d.split('-'); S.dia = new Date(a, mm - 1, dd); cal(); horas(); clima(); ok()       });     }     let tok = 0;     function horas() { // si el día es hoy, desactiva horarios que ya pasaron       const n = new Date(), hoyOk = S.dia && +S.dia === +hoy;       $$
+('#horas button').forEach(b => {
         const t = b.dataset.h.split(':'), pasado = hoyOk && (+t[0] * 60 + +t[1]) <= n.getHours() * 60 + n.getMinutes() + 30;
         b.disabled = pasado; if (pasado && S.hora === b.dataset.h) { S.hora = null; b.classList.remove('sel'); ok() }
       })
@@ -640,7 +416,8 @@
     $('#prev').onclick = () => { vista = new Date(vista.getFullYear(), vista.getMonth() - 1, 1); cal() };
     $('#next').onclick = () => { vista = new Date(vista.getFullYear(), vista.getMonth() + 1, 1); cal() };
     $('#horas').innerHTML = Array.from({ length: 16 }, (_, i) => { const t = `${12 + (i >> 1)}:${i % 2 ? '30' : '00'}`; return `<button data-h="${t}">${t}</button>` }).join('');
-    $$('#horas button').forEach(b => b.onclick = () => { S.hora = b.dataset.h; $$('#horas button').forEach(x => x.classList.toggle('sel', x === b)); ok() });
+    $$('#horas button').forEach(b => b.onclick = () => { S.hora = b.dataset.h; $$
+('#horas button').forEach(x => x.classList.toggle('sel', x === b)); ok() });
     const ok = () => $('#a-vibe').disabled = !(S.dia && S.hora);
     $('#a-vibe').onclick = () => { renderCards(); go('vibe') };
     cal();
@@ -695,7 +472,8 @@
       m.style.display = ver ? 'block' : 'none';
       if (ver) {
         if (mapa) mapa.remove(); mapa = L.map('map');
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { subdomains: 'abcd', maxZoom: 19, attribution: '© OpenStreetMap © CARTO' }).addTo(mapa);
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { maxNativeZoom: 16, maxZoom: 18, attribution: 'Tiles © Esri' }).addTo(mapa);
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', { maxNativeZoom: 16, maxZoom: 18 }).addTo(mapa);
         pts.forEach(c => L.marker(c).addTo(mapa));
         pts.length > 1 ? mapa.fitBounds(pts, { padding: [30, 30], maxZoom: 16 }) : mapa.setView(pts[0], 15)
       }
