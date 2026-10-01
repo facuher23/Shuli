@@ -479,18 +479,24 @@
       }
     };
 
-    const W3KEY = ''; // opcional: clave gratis de web3forms.com; si la ponés, se usa en vez de FormSubmit
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbzMweK986Zx-Gmu8r643RQSDON13ChwXPZqU5kUNW0KvenI4MBZx3rfM061YcgdeXlk/exec'; 
+    const W3KEY = ''; 
     const cuerpo = () => ({ dia: S.fecha, hora: S.hora, plan: S.cat.n, lugar: S.lugar, lugar_propio: S.propio || '-', mensaje: S.evitar || '-', clima: (S.clima || '-') + ' | ' + (S.luna || '') });
+    
     $('#enviar').onclick = async () => {
       const b = $('#enviar'), err = $('#err'); b.disabled = true; err.textContent = '';
       try {
-        const w = !!W3KEY;
-        const r = await fetch(w ? 'https://api.web3forms.com/submit' : 'https://formsubmit.co/ajax/' + EMAIL, {
-          method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify(w ? { access_key: W3KEY, subject: 'Dijo que sí', ...cuerpo() } : { _subject: 'Dijo que sí', _captcha: 'false', ...cuerpo() })
-        });
-        let j = {}; try { j = await r.json() } catch (_) { }
-        if (!r.ok || j.success === false || j.success === 'false') throw new Error(j.message || ('HTTP ' + r.status));
+        if (GAS_URL) {
+          await fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cuerpo()) });
+        } else {
+          const w = !!W3KEY;
+          const r = await fetch(w ? 'https://api.web3forms.com/submit' : 'https://formsubmit.co/ajax/' + EMAIL, {
+            method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify(w ? { access_key: W3KEY, subject: 'Dijo que sí', ...cuerpo() } : { _subject: 'Dijo que sí', _captcha: 'false', ...cuerpo() })
+          });
+          let j = {}; try { j = await r.json() } catch (_) { }
+          if (!r.ok || j.success === false || j.success === 'false') throw new Error(j.message || ('HTTP ' + r.status));
+        }
         go('fin'); corazon();
       } catch (e) {
         console.error(e);
