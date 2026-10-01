@@ -2,533 +2,815 @@
 <html lang="es">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>¿Salimos?</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <style>
-    :root {
-      --noche: #fff9e6;
-      --caja: rgba(255, 255, 255, 0.85);
-      --amarillo: #e67300;
-      --naranja: #ff5e00;
-      --crema: #3d2616;
-      --suave: #8c7362;
-      --r: 18px
-    }
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <title>¿Salimos?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <style>
+        :root {
+            --noche: #fff9e6;
+            --caja: rgba(255, 255, 255, 0.85);
+            --amarillo: #e67300;
+            --naranja: #ff5e00;
+            --crema: #3d2616;
+            --suave: #8c7362;
+            --r: 18px
+        }
 
-    * { box-sizing: border-box; margin: 0 }
+        * {
+            box-sizing: border-box;
+            margin: 0
+        }
 
-    body {
-      background: var(--noche);
-      color: var(--crema);
-      font: 16px/1.5 system-ui, sans-serif;
-      min-height: 100vh;
-      padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom)
-    }
+        body {
+            background: var(--noche);
+            color: var(--crema);
+            font: 16px/1.5 system-ui, sans-serif;
+            min-height: 100vh;
+            padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom)
+        }
 
-    h1, h2 {
-      font-family: 'Fraunces', Georgia, serif;
-      font-weight: 700;
-      line-height: 1.15;
-      color: var(--amarillo)
-    }
+        h1,
+        h2 {
+            font-family: 'Fraunces', Georgia, serif;
+            font-weight: 700;
+            line-height: 1.15;
+            color: var(--amarillo)
+        }
 
-    h1 { font-size: 2.4rem }
-    h2 { font-size: 1.6rem; margin-bottom: 6px }
+        h1 {
+            font-size: 2.4rem
+        }
 
-    p.sub { color: var(--suave); margin-bottom: 18px }
+        h2 {
+            font-size: 1.6rem;
+            margin-bottom: 6px
+        }
 
-    #stars { position: fixed; inset: 0; z-index: 0; pointer-events: none }
+        p.sub {
+            color: var(--suave);
+            margin-bottom: 18px
+        }
 
-    main {
-      position: relative; z-index: 1; max-width: 460px; min-height: 100vh;
-      margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column;
-      justify-content: center
-    }
+        #stars {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none
+        }
 
-    #intro { backdrop-filter: none; -webkit-backdrop-filter: none }
+        main {
+            position: relative;
+            z-index: 1;
+            max-width: 460px;
+            min-height: 100vh;
+            margin: 0 auto;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center
+        }
 
-    .s {
-      display: none; background: var(--caja);
-      border: 1px solid rgba(230, 115, 0, .15);
-      border-radius: var(--r); padding: 26px 20px;
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 10px 30px rgba(230, 115, 0, 0.06);
-      text-align: center
-    }
+        #intro {
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none
+        }
 
-    .s.on { display: block }
+        .s {
+            display: none;
+            background: var(--caja);
+            border: 1px solid rgba(230, 115, 0, .15);
+            border-radius: var(--r);
+            padding: 26px 20px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(230, 115, 0, 0.06);
+            text-align: center
+        }
 
-    .btn {
-      font: 600 1rem 'Fraunces', Georgia, serif; border: 0; border-radius: 999px;
-      padding: 12px 26px; cursor: pointer; color: #ffffff;
-      background: linear-gradient(135deg, #ffb703, var(--naranja));
-      box-shadow: 0 4px 12px rgba(255, 94, 0, 0.25); transition: transform 0.2s;
-    }
+        .s.on {
+            display: block
+        }
 
-    .btn:hover:not(:disabled) { transform: scale(1.05); }
-    .btn:disabled { opacity: .4; cursor: default; box-shadow: none; transform: none; }
+        .btn {
+            font: 600 1rem 'Fraunces', Georgia, serif;
+            border: 0;
+            border-radius: 999px;
+            padding: 12px 26px;
+            cursor: pointer;
+            color: #ffffff;
+            background: linear-gradient(135deg, #ffb703, var(--naranja));
+            box-shadow: 0 4px 12px rgba(255, 94, 0, 0.25);
+            transition: transform 0.2s;
+        }
 
-    .btn.g {
-      background: #ffffff; color: var(--amarillo);
-      border: 2px solid var(--amarillo); box-shadow: none;
-    }
+        .btn:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
 
-    button:focus-visible, input:focus-visible, textarea:focus-visible {
-      outline: 2px solid var(--naranja); outline-offset: 2px
-    }
+        .btn:disabled {
+            opacity: .4;
+            cursor: default;
+            box-shadow: none;
+            transform: none;
+        }
 
-    .big { font-size: 1.3rem; padding: 16px 38px }
+        .btn.g {
+            background: #ffffff;
+            color: var(--amarillo);
+            border: 2px solid var(--amarillo);
+            box-shadow: none;
+        }
 
-    .arena { display: flex; justify-content: center; gap: 24px; margin-top: 26px }
-    #no { z-index: 5; transition: left .25s, top .25s }
+        button:focus-visible,
+        input:focus-visible,
+        textarea:focus-visible {
+            outline: 2px solid var(--naranja);
+            outline-offset: 2px
+        }
 
-    .cal-h {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 8px; font-family: 'Fraunces', Georgia, serif
-    }
+        .big {
+            font-size: 1.3rem;
+            padding: 16px 38px
+        }
 
-    .cal-h button {
-      background: none; border: 0; color: var(--amarillo);
-      font-size: 1.4rem; cursor: pointer; padding: 4px 12px; transition: 0.2s;
-    }
-    .cal-h button:hover { transform: scale(1.2); color: var(--naranja); }
+        .arena {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 26px
+        }
 
-    .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px }
-    .grid span { font-size: .75rem; color: var(--suave); font-weight: 600; margin-bottom: 4px; }
+        #no {
+            z-index: 5;
+            transition: left .25s, top .25s
+        }
 
-    .grid button {
-      aspect-ratio: 1; border: 1px solid rgba(230, 115, 0, .15); border-radius: 10px;
-      background: #ffffff; color: var(--crema); cursor: pointer;
-      box-shadow: 0 2px 5px rgba(230, 115, 0, 0.05); transition: 0.2s; font-size: 0.95rem;
-    }
+        .cal-h {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-family: 'Fraunces', Georgia, serif
+        }
 
-    .grid button:not(:disabled):hover {
-      border-color: var(--naranja); transform: scale(1.1); z-index: 2;
-      box-shadow: 0 4px 10px rgba(255, 94, 0, 0.15); color: var(--naranja); font-weight: bold;
-    }
+        .cal-h button {
+            background: none;
+            border: 0;
+            color: var(--amarillo);
+            font-size: 1.4rem;
+            cursor: pointer;
+            padding: 4px 12px;
+            transition: 0.2s;
+        }
 
-    .grid button:disabled { opacity: .25; cursor: default; background: transparent; box-shadow: none; border-color: transparent; }
+        .cal-h button:hover {
+            transform: scale(1.2);
+            color: var(--naranja);
+        }
 
-    .grid button.sel, .chips button.sel {
-      background: linear-gradient(135deg, #ffb703, var(--naranja));
-      color: #ffffff !important; font-weight: 700; border: none; box-shadow: 0 4px 10px rgba(255, 94, 0, 0.25);
-    }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px
+        }
 
-    #clima { min-height: 1.5em; margin: 12px 0; color: var(--amarillo); font-size: .95rem }
+        .grid span {
+            font-size: .75rem;
+            color: var(--suave);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
 
-    .chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 18px }
-    .chips button {
-      border: 1px solid rgba(230, 115, 0, .15); border-radius: 10px;
-      background: #ffffff; color: var(--crema); padding: 10px 0; cursor: pointer;
-      box-shadow: 0 2px 5px rgba(230, 115, 0, 0.05); transition: 0.2s; font-weight: 500;
-    }
+        .grid button {
+            aspect-ratio: 1;
+            border: 1px solid rgba(230, 115, 0, .15);
+            border-radius: 10px;
+            background: #ffffff;
+            color: var(--crema);
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(230, 115, 0, 0.05);
+            transition: 0.2s;
+            font-size: 0.95rem;
+        }
 
-    .chips button:not(:disabled):hover {
-      border-color: var(--naranja); transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(255, 94, 0, 0.12); color: var(--naranja);
-    }
+        .grid button:not(:disabled):hover {
+            border-color: var(--naranja);
+            transform: scale(1.1);
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(255, 94, 0, 0.15);
+            color: var(--naranja);
+            font-weight: bold;
+        }
 
-    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px }
-    .cards button {
-      background: #ffffff; border: 2px solid transparent; border-radius: 14px;
-      color: var(--crema); padding: 22px 6px; cursor: pointer;
-      font: 500 1.05rem 'Fraunces', Georgia, serif; transition: all .2s ease;
-      box-shadow: 0 4px 12px rgba(230, 115, 0, 0.06);
-    }
+        .grid button:disabled {
+            opacity: .25;
+            cursor: default;
+            background: transparent;
+            box-shadow: none;
+            border-color: transparent;
+        }
 
-    .cards button:hover {
-      transform: translateY(-5px); border-color: var(--naranja);
-      box-shadow: 0 10px 20px rgba(255, 94, 0, 0.15);
-    }
+        .grid button.sel,
+        .chips button.sel {
+            background: linear-gradient(135deg, #ffb703, var(--naranja));
+            color: #ffffff !important;
+            font-weight: 700;
+            border: none;
+            box-shadow: 0 4px 10px rgba(255, 94, 0, 0.25);
+        }
 
-    .cards i { display: block; font-style: normal; font-size: 2.4rem; margin-bottom: 8px }
-    .cards small { display: block; font: 400 .75rem system-ui, sans-serif; color: var(--suave); margin-top: 4px }
+        #clima {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            min-height: 1.5em;
+            margin: 12px 0;
+            color: var(--amarillo);
+            font-size: .95rem
+        }
 
-    .reel { position: relative; margin: 14px 0 }
-    .win {
-      height: 168px; overflow: hidden;
-      -webkit-mask-image: linear-gradient(transparent, #000 32%, #000 68%, transparent);
-      mask-image: linear-gradient(transparent, #000 32%, #000 68%, transparent)
-    }
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(230, 115, 0, .25);
+            border-radius: 999px;
+            padding: 5px 12px;
+            margin: 3px;
+            font-size: .86rem;
+            color: var(--amarillo);
+            background: #ffffff;
+            font-weight: 500;
+        }
 
-    #strip { transition: transform 3.6s cubic-bezier(.15, .7, .1, 1) }
-    .it {
-      height: 56px; line-height: 56px; font: 500 1.4rem/56px 'Fraunces', Georgia, serif;
-      color: var(--crema); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px
-    }
+        .chips {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 18px
+        }
 
-    .reel::after {
-      content: ''; position: absolute; left: 0; right: 0; top: 56px; height: 56px;
-      border-block: 2px solid var(--amarillo); background: rgba(230, 115, 0, .05);
-      pointer-events: none; border-radius: 6px
-    }
+        .chips button {
+            border: 1px solid rgba(230, 115, 0, .15);
+            border-radius: 10px;
+            background: #ffffff;
+            color: var(--crema);
+            padding: 10px 0;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(230, 115, 0, 0.05);
+            transition: 0.2s;
+            font-weight: 500;
+        }
 
-    #pick { font: 700 1.3rem 'Fraunces', Georgia, serif; min-height: 1.8em; color: var(--amarillo) }
-    .row { display: flex; gap: 10px; justify-content: center; margin: 12px 0; flex-wrap: wrap }
+        .chips button:not(:disabled):hover {
+            border-color: var(--naranja);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(255, 94, 0, 0.12);
+            color: var(--naranja);
+        }
 
-    input, textarea {
-      width: 100%; background: #ffffff; border: 1px solid rgba(230, 115, 0, .25);
-      border-radius: 12px; color: var(--crema); padding: 12px 14px;
-      font: inherit; margin-top: 8px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-    }
+        .cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px
+        }
 
-    .ticket {
-      text-align: left; border: 2px dashed var(--amarillo); border-radius: 14px;
-      padding: 16px; margin: 14px 0; background: #ffffff; box-shadow: 0 4px 12px rgba(230, 115, 0, 0.05);
-    }
+        .cards button {
+            background: #ffffff;
+            border: 2px solid transparent;
+            border-radius: 14px;
+            color: var(--crema);
+            padding: 22px 6px;
+            cursor: pointer;
+            font: 500 1.05rem 'Fraunces', Georgia, serif;
+            transition: all .2s ease;
+            box-shadow: 0 4px 12px rgba(230, 115, 0, 0.06);
+        }
 
-    .ticket b { color: var(--amarillo); font-weight: 600 }
-    #map { height: 170px; border-radius: 12px; margin-bottom: 14px; display: none; box-shadow: 0 4px 12px rgba(230, 115, 0, 0.1); }
-    #err { color: #d63031; min-height: 1.4em; font-size: .9rem }
-    #heart { width: 100%; max-width: 320px; height: auto }
+        .cards button:hover {
+            transform: translateY(-4px);
+            border-color: var(--naranja);
+            box-shadow: 0 10px 20px rgba(255, 94, 0, 0.15);
+        }
 
-    .chip {
-      display: inline-flex; align-items: center; gap: 6px;
-      border: 1px solid rgba(230, 115, 0, .25); border-radius: 999px;
-      padding: 5px 12px; margin: 3px; font-size: .86rem; color: var(--amarillo);
-      background: #ffffff; font-weight: 500;
-    }
+        .cards i {
+            display: block;
+            font-style: normal;
+            font-size: 2.4rem;
+            margin-bottom: 8px
+        }
 
-    .chips button:disabled, .cards button:disabled { opacity: .3; cursor: default; transform: none; box-shadow: none; border-color: transparent; }
+        .cards small {
+            display: block;
+            font: 400 .75rem system-ui, sans-serif;
+            color: var(--suave);
+            margin-top: 4px
+        }
 
-    #lunagrande {
-      display: none; position: fixed; right: 9vw; top: 50%; transform: translateY(-50%);
-      z-index: 0; color: #ffb703; text-align: center; opacity: .7;
-      filter: drop-shadow(0 0 30px rgba(255, 183, 3, .4)); pointer-events: none
-    }
+        .reel {
+            position: relative;
+            margin: 14px 0
+        }
 
-    #lunagrande small { display: block; margin-top: 10px; color: #e67300; font: 500 1rem 'Fraunces', Georgia, serif }
+        .win {
+            height: 168px;
+            overflow: hidden;
+            -webkit-mask-image: linear-gradient(transparent, #000 32%, #000 68%, transparent);
+            mask-image: linear-gradient(transparent, #000 32%, #000 68%, transparent)
+        }
 
-    @media(min-width:1000px) { #lunagrande { display: block } }
+        #strip {
+            transition: transform 3.6s cubic-bezier(.15, .7, .1, 1)
+        }
 
-    .s { position: relative }
-    .back {
-      position: absolute; left: 10px; top: 10px; background: none; border: 0;
-      color: var(--suave); font: inherit; font-size: .9rem; cursor: pointer; padding: 6px 8px; font-weight: 500; transition: 0.2s;
-    }
+        .it {
+            height: 56px;
+            line-height: 56px;
+            font: 500 1.4rem/56px 'Fraunces', Georgia, serif;
+            color: var(--crema);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 10px
+        }
 
-    .back:hover { color: var(--naranja); transform: translateX(-3px); }
-    .back+h2 { margin-top: 14px }
-    #err a { color: var(--amarillo); font-weight: 600; }
+        .reel::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 56px;
+            height: 56px;
+            border-block: 2px solid var(--amarillo);
+            background: rgba(230, 115, 0, .05);
+            pointer-events: none;
+            border-radius: 6px
+        }
 
-    @media(prefers-reduced-motion:reduce) {
-      #strip { transition: none !important }
-      #no { transition: none }
-    }
-  </style>
+        #pick {
+            font: 700 1.3rem 'Fraunces', Georgia, serif;
+            min-height: 1.8em;
+            color: var(--amarillo)
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 12px 0;
+            flex-wrap: wrap
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            background: #ffffff;
+            border: 1px solid rgba(230, 115, 0, .25);
+            border-radius: 12px;
+            color: var(--crema);
+            padding: 12px 14px;
+            font: inherit;
+            margin-top: 8px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .ticket {
+            text-align: left;
+            border: 2px dashed var(--amarillo);
+            border-radius: 14px;
+            padding: 16px;
+            margin: 14px 0;
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(230, 115, 0, 0.05);
+        }
+
+        .ticket b {
+            color: var(--amarillo);
+            font-weight: 600
+        }
+
+        #map {
+            height: 170px;
+            border-radius: 12px;
+            margin-bottom: 14px;
+            display: none;
+            box-shadow: 0 4px 12px rgba(230, 115, 0, 0.1);
+        }
+
+        #err {
+            color: #d63031;
+            min-height: 1.4em;
+            font-size: .9rem
+        }
+
+        #heart {
+            width: 100%;
+            max-width: 320px;
+            height: auto
+        }
+
+        .chips button:disabled,
+        .cards button:disabled {
+            opacity: .3;
+            cursor: default;
+            transform: none;
+            box-shadow: none;
+            border-color: transparent;
+        }
+
+        #lunagrande {
+            display: none;
+            position: fixed;
+            right: 9vw;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 0;
+            color: #ffb703;
+            text-align: center;
+            opacity: .7;
+            filter: drop-shadow(0 0 30px rgba(255, 183, 3, .4));
+            pointer-events: none
+        }
+
+        #lunagrande small {
+            display: block;
+            margin-top: 10px;
+            color: #e67300;
+            font: 500 1rem 'Fraunces', Georgia, serif
+        }
+
+        @media(min-width:1000px) {
+            #lunagrande {
+                display: block
+            }
+        }
+
+        .s {
+            position: relative
+        }
+
+        .back {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            background: none;
+            border: 0;
+            color: var(--suave);
+            font: inherit;
+            font-size: .9rem;
+            cursor: pointer;
+            padding: 6px 8px;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .back:hover {
+            color: var(--naranja);
+            transform: translateX(-3px);
+        }
+
+        .back+h2 {
+            margin-top: 14px
+        }
+
+        #err a {
+            color: var(--amarillo);
+            font-weight: 600;
+        }
+
+        @media(prefers-reduced-motion:reduce) {
+            #strip {
+                transition: none !important
+            }
+
+            #no {
+                transition: none
+            }
+        }
+    </style>
 </head>
 
 <body>
-  <canvas id="stars"></canvas>
-  <div id="lunagrande"></div>
-  <main>
+    <canvas id="stars"></canvas>
+    <div id="lunagrande"></div>
+    <main>
 
-    <section class="s on" id="intro">
-      <h1>¿Salimos?</h1>
-      <p class="sub">Elegite algo lindo y rico.</p>
-      <div class="arena">
-        <button class="btn big" id="si">Sí</button>
-        <button class="btn g big" id="no">No</button>
-      </div>
-    </section>
+        <section class="s on" id="intro">
+            <h1>¿Salimos?</h1>
+            <p class="sub">Elegite algo lindo y rico.</p>
+            <div class="arena">
+                <button class="btn big" id="si">Sí</button>
+                <button class="btn g big" id="no">No</button>
+            </div>
+        </section>
 
-    <section class="s" id="cuando">
-      <h2>¿Cuándo estás libre?</h2>
-      <p class="sub">Elegite el día y la hora.</p>
-      <div class="cal-h"><button id="prev" aria-label="Mes anterior">‹</button><b id="mes"></b><button id="next"
-          aria-label="Mes siguiente">›</button></div>
-      <div class="grid" id="cal"></div>
-      <div id="clima"></div>
-      <div class="chips" id="horas"></div>
-      <button class="btn" id="a-vibe" disabled>Vamo</button>
-    </section>
+        <section class="s" id="cuando">
+            <h2>¿Cuándo estás libre?</h2>
+            <p class="sub">Elegite el día y la hora.</p>
+            <div class="cal-h"><button id="prev" aria-label="Mes anterior">‹</button><b id="mes"></b><button id="next"
+                    aria-label="Mes siguiente">›</button></div>
+            <div class="grid" id="cal"></div>
+            <div id="clima"></div>
+            <div class="chips" id="horas"></div>
+            <button class="btn" id="a-vibe" disabled>Vamo</button>
+        </section>
 
-    <section class="s" id="vibe">
-      <h2>¿Qué te pinta hacer juntos?</h2>
-      <p class="sub">Elegite un plancito.</p>
-      <div class="cards" id="cards"></div>
-    </section>
+        <section class="s" id="vibe">
+            <h2>¿Qué te pinta hacer juntos?</h2>
+            <p class="sub">Elegite un plancito.</p>
+            <div class="cards" id="cards"></div>
+        </section>
 
-    <section class="s" id="ruleta">
-      <h2 id="rt">Chann</h2>
-      <p class="sub">Tira sin miedo las veces que quieras.</p>
-      <div class="reel">
-        <div class="win">
-          <div id="strip"></div>
-        </div>
-      </div>
-      <div id="pick"></div>
-      <div class="row">
-        <button class="btn" id="girar">Girar</button>
-        <button class="btn g" id="otro" hidden>Otroo</button>
-        <button class="btn" id="dale" hidden>Esaa</button>
-      </div>
-      <input id="propio" placeholder="Ooooo elegite vos un lugarcito" maxlength="80">
-    </section>
+        <section class="s" id="ruleta">
+            <h2 id="rt">Chann</h2>
+            <p class="sub">Tira sin miedo las veces que quieras.</p>
+            <div class="reel">
+                <div class="win">
+                    <div id="strip"></div>
+                </div>
+            </div>
+            <div id="pick"></div>
+            <div class="row">
+                <button class="btn" id="girar">Girar</button>
+                <button class="btn g" id="otro" hidden>Otroo</button>
+                <button class="btn" id="dale" hidden>Esaa</button>
+            </div>
+            <input id="propio" placeholder="Ooooo elegite vos un lugarcito" maxlength="80">
+        </section>
 
-    <section class="s" id="pregunta">
-      <h2>Wait a second...</h2>
-      <p class="sub">No sé si querés agregar algo para que sepa, sino dejalo chill.</p>
-      <textarea id="evitar" rows="3" maxlength="200"></textarea>
-      <div class="row"><button class="btn" id="a-res">A verrr</button></div>
-    </section>
+        <section class="s" id="pregunta">
+            <h2>Wait a second...</h2>
+            <p class="sub">No sé si querés agregar algo para que sepa, sino dejalo chill.</p>
+            <textarea id="evitar" rows="3" maxlength="200"></textarea>
+            <div class="row"><button class="btn" id="a-res">A verrr</button></div>
+        </section>
 
-    <section class="s" id="resumen">
-      <h2>Ahí quedó</h2>
-      <div class="ticket" id="ticket"></div>
-      <div id="map"></div>
-      <div id="err"></div>
-      <button class="btn" id="enviar">Lito</button>
-    </section>
+        <section class="s" id="resumen">
+            <h2>Ahí quedó</h2>
+            <div class="ticket" id="ticket"></div>
+            <div id="map"></div>
+            <div id="err"></div>
+            <button class="btn" id="enviar">Lito</button>
+        </section>
 
-    <section class="s" id="fin">
-      <canvas id="heart" width="640" height="640"></canvas>
-      <h2>Ya quedó todo chill</h2>
-      <p class="sub">Viste que original? Bueno, ahí me llegó tu respuesta.</p>
-    </section>
+        <section class="s" id="fin">
+            <canvas id="heart" width="640" height="640"></canvas>
+            <h2>Ya quedó todo chill</h2>
+            <p class="sub">Viste que original? Bueno, ahí me llegó tu respuesta.</p>
+        </section>
 
-  </main>
+    </main>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script>
-    /* ───────── DATOS ─────────
-       c:[lat,lng] = ubicación (opcional). Sin c no se muestra mapa. */
-    const EMAIL = 'facundoher2009@gmail.com';
-    /* ═════ LUGARES ═════
-     n = nombre · t = tipos (cafe, helado, almuerzo, pasear)
-     s = sedes: una por cada local. z = zona (palmares, shopping, centro, parque… o '' si está suelto) y c = coordenadas [lat,lng].
-     · Si un lugar está en varios sitios (ej. Nipoti), poné una sede por sitio. Borrá las que no existan.
-     · En el combo, si caminan por Palmares, el segundo lugar sale de las sedes con z:'palmares' (y el mapa marca esa sede).
-     · Coords: Google Maps → clic derecho sobre el lugar → primer renglón del menú (ej. -32.8895, -68.8458) → clic para copiar
-       → pegalo entre corchetes: c:[-32.8895,-68.8458]. Con c:null no se muestra mapa. */
-    const LUGARES = [
-      /* café */
-      { n: 'Nipoti', t: ['cafe', 'almuerzo'], s: [{ z: 'palmares', c: [-32.95584746621618, -68.85904818858553] }, { z: 'shopping', c: [-32.90191457378276, -68.79745739752724] }, { z: '', c: null }] },
-      { n: 'Bastante', t: ['cafe'], s: [{ z: '', c: [-32.89293887424592, -68.85045083628803] }] },
-      { n: 'Vicolo', t: ['cafe'], s: [{ z: '', c: [-32.95534393531328, -68.85964042159314] }] },
-      { n: 'Shelby', t: ['cafe'], s: [{ z: '', c: [-32.95691473344564, -68.85905400203069] }] },
-      /* helado */
-      { n: 'Innamorato', t: ['helado'], s: [{ z: 'palmares', c: [-32.95565247606893, -68.8599245750931] }, { z: 'shopping', c: [-32.900229002112596, -68.79939271345168] }, { z: '', c: null }] },
-      { n: 'Freddo', t: ['helado'], s: [{ z: '', c: [-32.9551714868912, -68.8591763683469] }] },
-      { n: "Lucciano's", t: ['helado'], s: [{ z: 'palmares', c: [-32.9544306933975, -68.85855893661481] }] },
-      { n: 'Michel', t: ['helado'], s: [{ z: '', c: [-32.8912241130229, -68.85069647264518] }] },
-      /* almorzar (Nipoti ya cuenta) */
-      { n: 'Zitto', t: ['almuerzo'], s: [{ z: '', c: [-32.954516887353456, -68.85867155333239] }] },
-      /* pasear */
-      { n: 'Parque San Martín', t: ['pasear'], s: [{ z: 'parque', c: [-32.88972839095912, -68.87004388858838] }] },
-      { n: 'Shopping', t: ['pasear'], s: [{ z: 'shopping', c: [-32.90186960206693, -68.79752174811053] }] },
-      { n: 'Centro', t: ['pasear'], s: [{ z: 'centro', c: [-32.89188836239528, -68.84839077988386] }] },
-      { n: 'Palmares', t: ['pasear'], s: [{ z: 'palmares', c: [-32.95588347604527, -68.859016002078] }] },
-      { n: 'Barraca', t: ['pasear'], s: [{ z: '', c: [-32.915783367321374, -68.82197395776589] }] }
-    ];
-    const cap = z => z ? z[0].toUpperCase() + z.slice(1) : '';
-    const coordsDe = (n, z) => { const l = LUGARES.find(x => x.n === n); if (!l) return []; let ss = l.s; if (z) { const m = ss.filter(x => x.z === z); if (m.length) ss = m } return ss.filter(x => x.c).map(x => x.c) };
-    const etiqueta = (n, i) => { const l = LUGARES.find(x => x.n === n); return i === 1 && S.zona && l && l.s.some(x => x.z === S.zona) ? `${n} (${cap(S.zona)})` : n };
-    const CATS = [
-      { id: 'cafe', e: '☕', n: 'Café' }, { id: 'helado', e: '🍦', n: 'Helado' },
-      { id: 'almuerzo', e: '🍽️', n: 'Almorzar' }, { id: 'pasear', e: '🌳', n: 'Pasear' },
-      { id: 'combo', e: '🚶', n: 'Caminar y algo rico' }, { id: 'sorpresa', e: '🎲', n: 'Sorpresa' }
-    ];
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        /* ───────── DATOS ───────── */
+        const EMAIL = 'facundoher2009@gmail.com';
+        const LUGARES = [
+            /* café */
+            { n: 'Nipoti', t: ['cafe', 'almuerzo'], s: [{ z: 'palmares', c: [-32.95584746621618, -68.85904818858553] }, { z: 'shopping', c: [-32.90191457378276, -68.79745739752724] }, { z: '', c: null }] },
+            { n: 'Bastante', t: ['cafe'], s: [{ z: '', c: [-32.89293887424592, -68.85045083628803] }] },
+            { n: 'Vicolo', t: ['cafe'], s: [{ z: '', c: [-32.95534393531328, -68.85964042159314] }] },
+            { n: 'Shelby', t: ['cafe'], s: [{ z: '', c: [-32.95691473344564, -68.85905400203069] }] },
+            /* helado */
+            { n: 'Innamorato', t: ['helado'], s: [{ z: 'palmares', c: [-32.95565247606893, -68.8599245750931] }, { z: 'shopping', c: [-32.900229002112596, -68.79939271345168] }, { z: '', c: null }] },
+            { n: 'Freddo', t: ['helado'], s: [{ z: '', c: [-32.9551714868912, -68.8591763683469] }] },
+            { n: "Lucciano's", t: ['helado'], s: [{ z: 'palmares', c: [-32.9544306933975, -68.85855893661481] }] },
+            { n: 'Michel', t: ['helado'], s: [{ z: '', c: [-32.8912241130229, -68.85069647264518] }] },
+            /* almorzar */
+            { n: 'Zitto', t: ['almuerzo'], s: [{ z: '', c: [-32.954516887353456, -68.85867155333239] }] },
+            /* pasear */
+            { n: 'Parque San Martín', t: ['pasear'], s: [{ z: 'parque', c: [-32.88972839095912, -68.87004388858838] }] },
+            { n: 'Shopping', t: ['pasear'], s: [{ z: 'shopping', c: [-32.90186960206693, -68.79752174811053] }] },
+            { n: 'Centro', t: ['pasear'], s: [{ z: 'centro', c: [-32.89188836239528, -68.84839077988386] }] },
+            { n: 'Palmares', t: ['pasear'], s: [{ z: 'palmares', c: [-32.95588347604527, -68.859016002078] }] },
+            { n: 'Barraca', t: ['pasear'], s: [{ z: 'barraca', c: [-32.915783367321374, -68.82197395776589] }] }
+        ];
 
-    const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];     const S = {};     const go = id => { $$('.s').forEach(e => e.classList.toggle('on', e.id === id)); scrollTo(0, 0) };
+        /* Zona automática */
+        (() => {
+            const km = (a, b) => { const r = Math.PI / 180, dx = (b[1] - a[1]) * r * Math.cos(a[0] * r), dy = (b[0] - a[0]) * r; return 6371 * Math.hypot(dx, dy) };
+            const anclas = LUGARES.filter(l => l.t.includes('pasear')).flatMap(l => l.s).filter(x => x.c && x.z);
+            LUGARES.forEach(l => l.s.forEach(x => {
+                if (x.z || !x.c) return; let best = null, d = .4;
+                anclas.forEach(a => { const k = km(x.c, a.c); if (k < d) { d = k; best = a.z } });
+                if (best) x.z = best;
+            }));
+        })();
 
-    /* ───────── ESTRELLAS ───────── */
-    (() => {
-      const c = $('#stars'), x = c.getContext('2d'), col = ['#f77f00', '#d62828', '#fcbf49']; let W, H, st = [];
-      const init = () => {
-        W = c.width = innerWidth; H = c.height = innerHeight;
-        st = Array.from({ length: 150 }, () => ({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 2.5 + 1.2, c: col[Math.random() * 3 | 0], a: Math.random(), d: (Math.random() * .008 + .002) * (Math.random() < .5 ? 1 : -1) }))
-      };
-      const draw = () => {
-        x.clearRect(0, 0, W, H); for (const s of st) { s.a += s.d; if (s.a <= .05 || s.a >= 1) s.d *= -1; x.globalAlpha = Math.max(.05, Math.min(1, s.a)); x.fillStyle = s.c; x.beginPath(); x.arc(s.x, s.y, s.r, 0, 7); x.fill() }
-        if (!matchMedia('(prefers-reduced-motion:reduce)').matches) requestAnimationFrame(draw)
-      };
-      addEventListener('resize', init); init(); draw();
-    })();
+        const cap = z => z ? z[0].toUpperCase() + z.slice(1) : '';
+        const coordsDe = (n, z) => { const l = LUGARES.find(x => x.n === n); if (!l) return []; let ss = l.s; if (z) { const m = ss.filter(x => x.z === z); if (m.length) ss = m } return ss.filter(x => x.c).map(x => x.c) };
+        const etiqueta = (n, i) => { const l = LUGARES.find(x => x.n === n); return i === 1 && S.zona && l && l.s.some(x => x.z === S.zona) ? `${n} (${cap(S.zona)})` : n };
+        const CATS = [
+            { id: 'cafe', e: '☕', n: 'Café' }, { id: 'helado', e: '🍦', n: 'Helado' },
+            { id: 'almuerzo', e: '🍽️', n: 'Almorzar' }, { id: 'pasear', e: '🌳', n: 'Pasear' },
+            { id: 'combo', e: '🚶', n: 'Caminar y algo rico' }, { id: 'sorpresa', e: '🎲', n: 'Sorpresa' }
+        ];
 
-    /* ───────── BOTÓN NO (escapa por toda la pantalla, nunca se deja apretar) ───────── */
-    (() => {
-      const no = $('#no'), si = $('#si');
-      const huir = e => {
-        e.preventDefault(); const B = si.getBoundingClientRect(), w = no.offsetWidth, h = no.offsetHeight, m = 12; let x, y, t = 0;
-        do { x = m + Math.random() * (innerWidth - w - 2 * m); y = m + Math.random() * (innerHeight - h - 2 * m); t++ }
-        while (t < 40 && x < B.right + 16 && x + w > B.left - 16 && y < B.bottom + 16 && y + h > B.top - 16);
-        no.style.position = 'fixed'; no.style.right = 'auto'; no.style.left = x + 'px'; no.style.top = y + 'px'
-      };
-      no.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') huir(e) });
-      no.addEventListener('pointerdown', huir);
-      no.addEventListener('click', huir);
-      si.onclick = () => go('cuando');
-    })();
+        const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)]; const S = {}; const go = id => { $$('.s').forEach(e => e.classList.toggle('on', e.id === id)); scrollTo(0, 0) };
 
-    /* ───────── CALENDARIO + HORA + CLIMA ───────── */
-    const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
-    let vista = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-    const iso = d => d.toLocaleDateString('sv');
-    const WX = c => c === 0 ? ['sol', 'despejado'] : c < 3 ? ['sol', 'algo nublado'] : c === 3 ? ['nube', 'nublado'] : c < 50 ? ['nube', 'niebla'] : c < 70 ? ['lluvia', 'lluvia'] : c < 80 ? ['nube', 'nieve'] : c < 90 ? ['lluvia', 'chubascos'] : ['lluvia', 'tormenta'];
-    const IC = {
-      sol: '<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',
-      nube: '<path d="M7 18a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 8.5 4.5 4.5 0 0 1 17.5 18z"/>',
-      lluvia: '<path d="M7 14a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 4.5 4.5 4.5 0 0 1 17.5 14z"/><path d="M8 17l-1 3M12 17l-1 3M16 17l-1 3"/>',
-      atardecer: '<path d="M4 18h16M7 18a5 5 0 0 1 10 0M12 6v3M5 10l2 2M19 10l-2 2"/>'
-    };
-    const ico = n => `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]}</svg>`;
-    const chip = (i, t) => `<span class="chip">${i}${t}</span>`;
-    /* Luna calculada (sin API), dibujada en SVG. Hemisferio sur: creciente = iluminada a la izquierda */
-    const FASES = ['luna nueva', 'luna creciente', 'cuarto creciente', 'gibosa creciente', 'luna llena', 'gibosa menguante', 'cuarto menguante', 'luna menguante'];
-    function faseLunar(d) { const c = 29.530588, dias = (Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 12) - Date.UTC(2000, 0, 6, 18, 14)) / 864e5, f = (((dias % c) + c) % c) / c; return { f, nombre: FASES[Math.floor(f * 8 + .5) % 8] } }
-    function lunaSVG(f, px) {
-      const g = f < .5 ? f : 1 - f, rx = (10 * Math.abs(Math.cos(2 * Math.PI * g))).toFixed(2), sw = g < .25 ? 0 : 1;
-      return `<svg viewBox="-11 -11 22 22" width="${px}" height="${px}" aria-hidden="true"><circle r="10" fill="#fff9e6" stroke="currentColor" stroke-width=".5"/><path d="M0 -10A10 10 0 0 1 0 10A${rx} 10 0 0 ${sw} 0 -10Z" fill="currentColor" transform="scale(${f < .5 ? -1 : 1} 1)"/></svg>`
-    }
-    function lunaGrande(d) { const l = faseLunar(d); $('#lunagrande').innerHTML = lunaSVG(l.f, 220) + `<small>${l.nombre}</small>` }
-    function cal() {
-      const y = vista.getFullYear(), m = vista.getMonth();
-      $('#mes').textContent = vista.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
-      let h = 'LMXJVSD'.split('').map(l => `<span>${l}</span>`).join('');
-      h += '<i></i>'.repeat((new Date(y, m, 1).getDay() + 6) % 7);
-      for (let d = 1; d <= new Date(y, m + 1, 0).getDate(); d++) {
-        const f = new Date(y, m, d), sel = S.dia && +S.dia === +f;
-        h += `<button data-d="${iso(f)}" class="${sel ? 'sel' : ''}" ${f < hoy ? 'disabled' : ''}>${d}</button>`
-      }
-      $('#cal').innerHTML = h;
-      $$('#cal button:not(:disabled)').forEach(b => b.onclick = () => {         const [a, mm, dd] = b.dataset.d.split('-'); S.dia = new Date(a, mm - 1, dd); cal(); horas(); clima(); ok()       });     }     let tok = 0;     function horas() { // si el día es hoy, desactiva horarios que ya pasaron       const n = new Date(), hoyOk = S.dia && +S.dia === +hoy;       $$
-('#horas button').forEach(b => {
-        const t = b.dataset.h.split(':'), pasado = hoyOk && (+t[0] * 60 + +t[1]) <= n.getHours() * 60 + n.getMinutes() + 30;
-        b.disabled = pasado; if (pasado && S.hora === b.dataset.h) { S.hora = null; b.classList.remove('sel'); ok() }
-      })
-    }
-    async function clima() {
-      const id = ++tok, el = $('#clima'), l = faseLunar(S.dia), lc = chip(lunaSVG(l.f, 18), l.nombre);
-      S.clima = ''; S.sol = null; S.luna = l.nombre; el.innerHTML = lc; lunaGrande(S.dia);
-      try {
-        const d = iso(S.dia);
-        const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=-32.89&longitude=-68.84&daily=weathercode,temperature_2m_max,temperature_2m_min,sunset&timezone=auto&start_date=${d}&end_date=${d}`);
-        const j = await r.json(); if (!j.daily || id !== tok) throw 0;
-        const w = WX(j.daily.weathercode[0]), mn = Math.round(j.daily.temperature_2m_min[0]), mx = Math.round(j.daily.temperature_2m_max[0]), sol = j.daily.sunset[0].slice(11, 16);
-        S.sol = sol; S.clima = `${w[1]}, ${mn}° a ${mx}°, atardecer ${sol}`;
-        el.innerHTML = chip(ico(w[0]), `${w[1]} ${mn}°/${mx}°`) + chip(ico('atardecer'), sol) + lc;
-      } catch (e) { }
-    }
-    $('#prev').onclick = () => { vista = new Date(vista.getFullYear(), vista.getMonth() - 1, 1); cal() };
-    $('#next').onclick = () => { vista = new Date(vista.getFullYear(), vista.getMonth() + 1, 1); cal() };
-    $('#horas').innerHTML = Array.from({ length: 16 }, (_, i) => { const t = `${12 + (i >> 1)}:${i % 2 ? '30' : '00'}`; return `<button data-h="${t}">${t}</button>` }).join('');
-    $$('#horas button').forEach(b => b.onclick = () => { S.hora = b.dataset.h; $$
-('#horas button').forEach(x => x.classList.toggle('sel', x === b)); ok() });
-    const ok = () => $('#a-vibe').disabled = !(S.dia && S.hora);
-    $('#a-vibe').onclick = () => { renderCards(); go('vibe') };
-    cal();
+        /* ───────── ESTRELLAS ───────── */
+        (() => {
+            const c = $('#stars'), x = c.getContext('2d'), col = ['#f77f00', '#d62828', '#fcbf49']; let W, H, st = [];
+            const init = () => {
+                W = c.width = innerWidth; H = c.height = innerHeight;
+                st = Array.from({ length: 150 }, () => ({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 2.5 + 1.2, c: col[Math.random() * 3 | 0], a: Math.random(), d: (Math.random() * .008 + .002) * (Math.random() < .5 ? 1 : -1) }))
+            };
+            const draw = () => {
+                x.clearRect(0, 0, W, H); for (const s of st) { s.a += s.d; if (s.a <= .05 || s.a >= 1) s.d *= -1; x.globalAlpha = Math.max(.05, Math.min(1, s.a)); x.fillStyle = s.c; x.beginPath(); x.arc(s.x, s.y, s.r, 0, 7); x.fill() }
+                if (!matchMedia('(prefers-reduced-motion:reduce)').matches) requestAnimationFrame(draw)
+            };
+            addEventListener('resize', init); init(); draw();
+        })();
 
-    /* ───────── CARDS ───────── */
-    lunaGrande(new Date());
-    const tarde = () => { const t = (S.hora || '12:00').split(':'); return +t[0] * 60 + +t[1] > 15 * 60 };
-    const nombres = f => [...new Set(LUGARES.filter(f).map(l => l.n))];
-    function renderCards() {
-      $('#cards').innerHTML = CATS.map(c => { const off = c.id === 'almuerzo' && tarde(); return `<button data-c="${c.id}" ${off ? 'disabled' : ''}><i>${c.e}</i>${c.n}${off ? '<small>hasta las 15:00</small>' : ''}</button>` }).join('');
-      $$('#cards button').forEach(b => b.onclick = () => elegir(b.dataset.c));
-    }
-    function elegir(id) {
-      S.cat = CATS.find(c => c.id === id); S.picks = []; S.fi = 0; S.zona = '';
-      S.fases = id === 'combo' ? [{ t: 'Primero, a caminar', n: nombres(l => l.t.includes('pasear')) }, { t: 'Después, algo rico', n: nombres(l => l.t.includes('helado') || l.t.includes('cafe')) }]
-        : id === 'sorpresa' ? [{ t: 'Sorpresa', n: nombres(l => l.t.some(t => t !== 'almuerzo' || !tarde())) }]
-          : [{ t: 'La ruleta', n: nombres(l => l.t.includes(id)) }];
-      fase(); go('ruleta');
-    }
-    function fase() {
-      const f = S.fases[S.fi]; S.names = f.n; S.cur = '';
-      if (S.cat.id === 'combo' && S.fi === 1) { // el segundo lugar, cerca del primero (si hay opciones en esa zona)
-        const z = S.zona, cerca = z ? nombres(l => (l.t.includes('helado') || l.t.includes('cafe')) && l.s.some(x => x.z === z)) : [];
-        if (cerca.length > 1) S.names = cerca
-      }
-      $('#rt').textContent = f.t; $('#pick').textContent = '';
-      $('#otro').hidden = $('#dale').hidden = true; $('#girar').hidden = false; pintar();
-    }
+        /* ───────── BOTÓN NO ───────── */
+        (() => {
+            const no = $('#no'), si = $('#si');
+            const huir = e => {
+                e.preventDefault(); const B = si.getBoundingClientRect(), w = no.offsetWidth, h = no.offsetHeight, m = 12; let x, y, t = 0;
+                do { x = m + Math.random() * (innerWidth - w - 2 * m); y = m + Math.random() * (innerHeight - h - 2 * m); t++ }
+                while (t < 40 && x < B.right + 16 && x + w > B.left - 16 && y < B.bottom + 16 && y + h > B.top - 16);
+                no.style.position = 'fixed'; no.style.right = 'auto'; no.style.left = x + 'px'; no.style.top = y + 'px'
+            };
+            no.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') huir(e) });
+            no.addEventListener('pointerdown', huir);
+            no.addEventListener('click', huir);
+            si.onclick = () => go('cuando');
+        })();
 
-    /* ───────── RULETA (estilo tragamonedas) ───────── */
-    const RH = 56; let pos = 0, gira = false;
-    function mover(anim) { const st = $('#strip'); st.style.transition = anim ? '' : 'none'; st.style.transform = `translateY(${RH - pos * RH}px)` }
-    function pintar() { const n = S.names.length; $('#strip').innerHTML = Array.from({ length: n * 8 }, (_, i) => `<div class="it">${S.names[i % n]}</div>`).join(''); pos = n; mover(false) }
-    function girar() {
-      if (gira) return; gira = true; $('#otro').hidden = $('#dale').hidden = $('#girar').hidden = true; $('#pick').textContent = '';
-      const n = S.names.length, k = Math.random() * n | 0;
-      pos = pos % n + n; mover(false); void $('#strip').offsetHeight;
-      pos += (((k - pos) % n) + n) % n + 4 * n; mover(true);
-      setTimeout(() => { gira = false; S.cur = S.names[k]; $('#pick').textContent = 'Toca: ' + S.cur; $('#otro').hidden = $('#dale').hidden = false }, matchMedia('(prefers-reduced-motion:reduce)').matches ? 50 : 3700);
-    }
-    $('#girar').onclick = $('#otro').onclick = girar;
-    $('#dale').onclick = () => { S.picks[S.fi] = S.cur; if (S.cat.id === 'combo' && S.fi === 0) S.zona = ((LUGARES.find(l => l.n === S.cur) || { s: [{}] }).s[0].z) || ''; if (S.fi < S.fases.length - 1) { S.fi++; fase() } else go('pregunta') };
+        /* ───────── CALENDARIO + HORA + CLIMA ───────── */
+        const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+        let vista = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+        const iso = d => d.toLocaleDateString('sv');
+        const WX = c => c === 0 ? ['sol', 'despejado'] : c < 3 ? ['sol', 'algo nublado'] : c === 3 ? ['nube', 'nublado'] : c < 50 ? ['nube', 'niebla'] : c < 70 ? ['lluvia', 'lluvia'] : c < 80 ? ['nube', 'nieve'] : c < 90 ? ['lluvia', 'chubascos'] : ['lluvia', 'tormenta'];
+        const IC = {
+            sol: '<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',
+            nube: '<path d="M7 18a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 8.5 4.5 4.5 0 0 1 17.5 18z"/>',
+            lluvia: '<path d="M7 14a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 4.5 4.5 4.5 0 0 1 17.5 14z"/><path d="M8 17l-1 3M12 17l-1 3M16 17l-1 3"/>',
+            atardecer: '<path d="M4 18h16M7 18a5 5 0 0 1 10 0M12 6v3M5 10l2 2M19 10l-2 2"/>'
+        };
+        const ico = n => `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]}</svg>`;
+        const chip = (i, t) => `<span class="chip">${i}${t}</span>`;
 
-    /* ───────── RESUMEN + ENVÍO ───────── */
-    let mapa;
-    $('#a-res').onclick = () => {
-      S.evitar = $('#evitar').value.trim(); S.propio = $('#propio').value.trim(); S.lugar = S.picks.map(etiqueta).join(' + ');
-      S.fecha = S.dia.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
-      $('#ticket').innerHTML = `<p><b>Día:</b> ${S.fecha}</p><p><b>Hora:</b> ${S.hora}</p><p><b>Plan:</b> ${S.cat.n}</p><p><b>Lugar:</b> ${S.lugar}${S.propio ? ` (o tu idea: ${S.propio})` : ''}</p>${S.clima ? `<p><b>Clima:</b> ${S.clima}</p>` : ''}${S.evitar ? `<p><b>Mensaje:</b> ${S.evitar}</p>` : ''}`;
-      go('resumen');
-      const pts = S.picks.flatMap((n, i) => coordsDe(n, i === 1 ? S.zona : '')), m = $('#map'), ver = pts.length && window.L;
-      m.style.display = ver ? 'block' : 'none';
-      if (ver) {
-        if (mapa) mapa.remove(); mapa = L.map('map');
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { maxNativeZoom: 16, maxZoom: 18, attribution: 'Tiles © Esri' }).addTo(mapa);
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', { maxNativeZoom: 16, maxZoom: 18 }).addTo(mapa);
-        pts.forEach(c => L.marker(c).addTo(mapa));
-        pts.length > 1 ? mapa.fitBounds(pts, { padding: [30, 30], maxZoom: 16 }) : mapa.setView(pts[0], 15)
-      }
-    };
+        const FASES = ['luna nueva', 'luna creciente', 'cuarto creciente', 'gibosa creciente', 'luna llena', 'gibosa menguante', 'cuarto menguante', 'luna menguante'];
+        function faseLunar(d) { const c = 29.530588, dias = (Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 12) - Date.UTC(2000, 0, 6, 18, 14)) / 864e5, f = (((dias % c) + c) % c) / c; return { f, nombre: FASES[Math.floor(f * 8 + .5) % 8] } }
 
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbzMweK986Zx-Gmu8r643RQSDON13ChwXPZqU5kUNW0KvenI4MBZx3rfM061YcgdeXlk/exec'; 
-    const W3KEY = ''; 
-    const cuerpo = () => ({ dia: S.fecha, hora: S.hora, plan: S.cat.n, lugar: S.lugar, lugar_propio: S.propio || '-', mensaje: S.evitar || '-', clima: (S.clima || '-') + ' | ' + (S.luna || '') });
-    
-    $('#enviar').onclick = async () => {
-      const b = $('#enviar'), err = $('#err'); b.disabled = true; err.textContent = '';
-      try {
-        if (GAS_URL) {
-          await fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cuerpo()) });
-        } else {
-          const w = !!W3KEY;
-          const r = await fetch(w ? 'https://api.web3forms.com/submit' : 'https://formsubmit.co/ajax/' + EMAIL, {
-            method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-            body: JSON.stringify(w ? { access_key: W3KEY, subject: 'Dijo que sí', ...cuerpo() } : { _subject: 'Dijo que sí', _captcha: 'false', ...cuerpo() })
-          });
-          let j = {}; try { j = await r.json() } catch (_) { }
-          if (!r.ok || j.success === false || j.success === 'false') throw new Error(j.message || ('HTTP ' + r.status));
+        function lunaSVG(f, px) {
+            const g = f < .5 ? f : 1 - f, rx = (10 * Math.abs(Math.cos(2 * Math.PI * g))).toFixed(2), sw = g < .25 ? 0 : 1;
+            return `<svg viewBox="-11 -11 22 22" width="${px}" height="${px}" aria-hidden="true"><circle r="10" fill="#fff9e6" stroke="currentColor" stroke-width=".5"/><path d="M0 -10A10 10 0 0 1 0 10A${rx} 10 0 0 ${sw} 0 -10Z" fill="currentColor" transform="scale(${f < .5 ? -1 : 1} 1)"/></svg>`
         }
-        go('fin'); corazon();
-      } catch (e) {
-        console.error(e);
-        const txt = Object.entries(cuerpo()).map(([k, v]) => k + ': ' + v).join('\n');
-        err.innerHTML = `No se pudo enviar (${e.message || 'sin conexión'}).<br><a href="mailto:${EMAIL}?subject=${encodeURIComponent('Dijo que sí')}&body=${encodeURIComponent(txt)}">Mandámelo por mail igual</a>`; b.disabled = false
-      }
-    };
 
-    /* ───────── CORAZÓN ───────── */
-    function corazon() {
-      const c = $('#heart'), x = c.getContext('2d'), txt = 'OREO', P = [];
-      for (let z = -3; z <= 3; z++)for (let i = 0; i < 70; i++) {
-        const t = i / 70 * 6.283;
-        P.push({ x: 16 * Math.sin(t) ** 3, y: -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)), z: z * 2.2, ch: txt[(i + z + 3) % txt.length], o: (i + z) % 2 })
-      }
-      let th = 0; const red = matchMedia('(prefers-reduced-motion:reduce)').matches;
-      (function f() {
-        x.clearRect(0, 0, 640, 640); th += .02; const cs = Math.cos(th), sn = Math.sin(th);
-        for (const p of P) {
-          const X = p.x * cs + p.z * sn, Z = -p.x * sn + p.z * cs;
-          x.globalAlpha = Math.max(.3, Math.min(1, .45 + .55 * (Z + 20) / 40)); x.fillStyle = p.o ? '#ffd23f' : '#ff8a3d'; x.font = '700 18px Fraunces,Georgia,serif'; x.fillText(p.ch, 320 + X * 15, 300 + p.y * 15)
+        function lunaGrande(d) { const l = faseLunar(d); $('#lunagrande').innerHTML = lunaSVG(l.f, 220) + `<small>${l.nombre}</small>` }
+
+        function cal() {
+            const y = vista.getFullYear(), m = vista.getMonth();
+            $('#mes').textContent = vista.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
+            let h = 'LMXJVSD'.split('').map(l => `<span>${l}</span>`).join('');
+            h += '<i></i>'.repeat((new Date(y, m, 1).getDay() + 6) % 7);
+            for (let d = 1; d <= new Date(y, m + 1, 0).getDate(); d++) {
+                const f = new Date(y, m, d), sel = S.dia && +S.dia === +f;
+                h += `<button data-d="${iso(f)}" class="${sel ? 'sel' : ''}" ${f < hoy ? 'disabled' : ''}>${d}</button>`
+            }
+            $('#cal').innerHTML = h;
+            $$('#cal button:not(:disabled)').forEach(b => b.onclick = () => { const [a, mm, dd] = b.dataset.d.split('-'); S.dia = new Date(a, mm - 1, dd); cal(); horas(); clima(); ok() });
+        } let tok = 0; function horas() {
+            const n = new Date(), hoyOk = S.dia && +S.dia === +hoy; $$
+                ('#horas button').forEach(b => {
+                    const t = b.dataset.h.split(':'), pasado = hoyOk && (+t[0] * 60 + +t[1]) <= n.getHours() * 60 + n.getMinutes() + 30;
+                    b.disabled = pasado; if (pasado && S.hora === b.dataset.h) { S.hora = null; b.classList.remove('sel'); ok() }
+                })
         }
-        x.globalAlpha = 1; if (!red) requestAnimationFrame(f)
-      })();
-    }
-    const ATRAS = { cuando: 'intro', vibe: 'cuando', ruleta: 'vibe', pregunta: 'ruleta', resumen: 'pregunta' };
-    Object.entries(ATRAS).forEach(([id, to]) => {
-      const b = document.createElement('button'); b.className = 'back'; b.textContent = '‹ Atrás';
-      b.onclick = () => { if (id === 'ruleta' && S.fi > 0) { S.fi--; fase() } else go(to) }; $('#' + id).prepend(b)
-    });
-    if (location.hash === '#fin') { go('fin'); corazon() } // vista previa del corazón: index.html#fin
-  </script>
+
+        async function clima() {
+            const id = ++tok, el = $('#clima'), l = faseLunar(S.dia), lc = chip(lunaSVG(l.f, 18), l.nombre);
+            S.clima = ''; S.sol = null; S.luna = l.nombre; el.innerHTML = lc; lunaGrande(S.dia);
+            try {
+                const d = iso(S.dia);
+                const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=-32.89&longitude=-68.84&daily=weathercode,temperature_2m_max,temperature_2m_min,sunset&timezone=auto&start_date=${d}&end_date=${d}`);
+                const j = await r.json(); if (!j.daily || id !== tok) throw 0;
+                const w = WX(j.daily.weathercode[0]), mn = Math.round(j.daily.temperature_2m_min[0]), mx = Math.round(j.daily.temperature_2m_max[0]), sol = j.daily.sunset[0].slice(11, 16);
+                S.sol = sol; S.clima = `${w[1]}, ${mn}° a ${mx}°, atardecer ${sol}`;
+                el.innerHTML = chip(ico(w[0]), `${w[1]} ${mn}°/${mx}°`) + chip(ico('atardecer'), sol) + lc;
+            } catch (e) {
+                S.clima = 'Aún no hay pronóstico (muy a futuro)';
+            }
+        }
+
+        $('#prev').onclick = () => { vista = new Date(vista.getFullYear(), vista.getMonth() - 1, 1); cal() };
+        $('#next').onclick = () => { vista = new Date(vista.getFullYear(), vista.getMonth() + 1, 1); cal() };
+        $('#horas').innerHTML = Array.from({ length: 16 }, (_, i) => { const t = `${12 + (i >> 1)}:${i % 2 ? '30' : '00'}`; return `<button data-h="${t}">${t}</button>` }).join('');
+        $$('#horas button').forEach(b => b.onclick = () => {
+            S.hora = b.dataset.h; $$
+                ('#horas button').forEach(x => x.classList.toggle('sel', x === b)); ok()
+        });
+        const ok = () => $('#a-vibe').disabled = !(S.dia && S.hora);
+        $('#a-vibe').onclick = () => { renderCards(); go('vibe') };
+        cal();
+
+        /* ───────── CARDS ───────── */
+        lunaGrande(new Date());
+        const tarde = () => { const t = (S.hora || '12:00').split(':'); return +t[0] * 60 + +t[1] > 15 * 60 };
+        const nombres = f => [...new Set(LUGARES.filter(f).map(l => l.n))];
+        function renderCards() {
+            $('#cards').innerHTML = CATS.map(c => { const off = c.id === 'almuerzo' && tarde(); return `<button data-c="${c.id}" ${off ? 'disabled' : ''}><i>${c.e}</i>${c.n}${off ? '<small>hasta las 15:00</small>' : ''}</button>` }).join('');
+            $$('#cards button').forEach(b => b.onclick = () => elegir(b.dataset.c));
+        }
+        function elegir(id) {
+            S.cat = CATS.find(c => c.id === id); S.picks = []; S.fi = 0; S.zona = '';
+            S.fases = id === 'combo' ? [{ t: 'Primero, a caminar', n: nombres(l => l.t.includes('pasear')) }, { t: 'Después, algo rico', n: nombres(l => l.t.includes('helado') || l.t.includes('cafe')) }]
+                : id === 'sorpresa' ? [{ t: 'Sorpresa', n: nombres(l => l.t.some(t => t !== 'almuerzo' || !tarde())) }]
+                    : [{ t: 'La ruleta', n: nombres(l => l.t.includes(id)) }];
+            fase(); go('ruleta');
+        }
+        function fase() {
+            const f = S.fases[S.fi]; S.names = f.n; S.cur = '';
+            if (S.cat.id === 'combo' && S.fi === 1) {
+                const z = S.zona, cerca = z ? nombres(l => (l.t.includes('helado') || l.t.includes('cafe')) && l.s.some(x => x.z === z)) : [];
+                if (cerca.length > 1) S.names = cerca
+            }
+            $('#rt').textContent = f.t; $('#pick').textContent = '';
+            $('#otro').hidden = $('#dale').hidden = true; $('#girar').hidden = false; pintar();
+        }
+
+        /* ───────── RULETA ───────── */
+        const RH = 56; let pos = 0, gira = false;
+        function mover(anim) { const st = $('#strip'); st.style.transition = anim ? '' : 'none'; st.style.transform = `translateY(${RH - pos * RH}px)` }
+        function pintar() { const n = S.names.length; $('#strip').innerHTML = Array.from({ length: n * 8 }, (_, i) => `<div class="it">${S.names[i % n]}</div>`).join(''); pos = n; mover(false) }
+        function girar() {
+            if (gira) return; gira = true; $('#otro').hidden = $('#dale').hidden = $('#girar').hidden = true; $('#pick').textContent = '';
+            const n = S.names.length, k = Math.random() * n | 0;
+            pos = pos % n + n; mover(false); void $('#strip').offsetHeight;
+            pos += (((k - pos) % n) + n) % n + 4 * n; mover(true);
+            setTimeout(() => { gira = false; S.cur = S.names[k]; $('#pick').textContent = 'Toca: ' + S.cur; $('#otro').hidden = $('#dale').hidden = false }, matchMedia('(prefers-reduced-motion:reduce)').matches ? 50 : 3700);
+        }
+        $('#girar').onclick = $('#otro').onclick = girar;
+        $('#dale').onclick = () => { S.picks[S.fi] = S.cur; if (S.cat.id === 'combo' && S.fi === 0) S.zona = ((LUGARES.find(l => l.n === S.cur) || { s: [{}] }).s[0].z) || ''; if (S.fi < S.fases.length - 1) { S.fi++; fase() } else go('pregunta') };
+
+        /* ───────── RESUMEN + ENVÍO ───────── */
+        let mapa;
+        $('#a-res').onclick = () => {
+            S.evitar = $('#evitar').value.trim(); S.propio = $('#propio').value.trim(); S.lugar = S.picks.map(etiqueta).join(' + ');
+            S.fecha = S.dia.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
+            $('#ticket').innerHTML = `<p><b>Día:</b> ${S.fecha}</p><p><b>Hora:</b> ${S.hora}</p><p><b>Plan:</b> ${S.cat.n}</p><p><b>Lugar:</b> ${S.lugar}${S.propio ? ` (o tu idea: ${S.propio})` : ''}</p>${S.clima ? `<p><b>Clima:</b> ${S.clima}</p>` : ''}${S.evitar ? `<p><b>Mensaje:</b> ${S.evitar}</p>` : ''}`;
+            go('resumen');
+            const pts = S.picks.flatMap((n, i) => coordsDe(n, i === 1 ? S.zona : '')), m = $('#map'), ver = pts.length && window.L;
+            m.style.display = ver ? 'block' : 'none';
+            if (ver) { if (mapa) mapa.remove(); mapa = L.map('map'); L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { maxNativeZoom: 16, maxZoom: 18, attribution: 'Tiles © Esri' }).addTo(mapa); L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', { maxNativeZoom: 16, maxZoom: 18 }).addTo(mapa); pts.forEach(c => L.marker(c).addTo(mapa)); pts.length > 1 ? mapa.fitBounds(pts, { padding: [30, 30], maxZoom: 16 }) : mapa.setView(pts[0], 15) }
+        };
+
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbzMweK986Zx-Gmu8r643RQSDON13ChwXPZqU5kUNW0KvenI4MBZx3rfM061YcgdeXlk/exec';
+        const W3KEY = '';
+        const cuerpo = () => ({ dia: S.fecha, hora: S.hora, plan: S.cat.n, lugar: S.lugar, lugar_propio: S.propio || '-', mensaje: S.evitar || '-', clima: (S.clima || '-') + ' | ' + (S.luna || '') });
+
+        $('#enviar').onclick = async () => {
+            const b = $('#enviar'), err = $('#err'); b.disabled = true; err.textContent = '';
+            try {
+                if (GAS_URL) {
+                    await fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cuerpo()) });
+                } else {
+                    const w = !!W3KEY;
+                    const r = await fetch(w ? 'https://api.web3forms.com/submit' : 'https://formsubmit.co/ajax/' + EMAIL, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                        body: JSON.stringify(w ? { access_key: W3KEY, subject: 'Dijo que sí', ...cuerpo() } : { _subject: 'Dijo que sí', _captcha: 'false', ...cuerpo() })
+                    });
+                    let j = {}; try { j = await r.json() } catch (_) { }
+                    if (!r.ok || j.success === false || j.success === 'false') throw new Error(j.message || ('HTTP ' + r.status));
+                }
+                go('fin'); corazon();
+            } catch (e) {
+                console.error(e);
+                const txt = Object.entries(cuerpo()).map(([k, v]) => k + ': ' + v).join('\n');
+                err.innerHTML = `No se pudo enviar (${e.message || 'sin conexión'}).<br><a href="mailto:${EMAIL}?subject=${encodeURIComponent('Dijo que sí')}&body=${encodeURIComponent(txt)}">Mandámelo por mail igual</a>`; b.disabled = false
+            }
+        };
+
+        /* ───────── CORAZÓN ───────── */
+        function corazon() {
+            const c = $('#heart'), x = c.getContext('2d'), txt = 'OREO', P = [];
+            for (let z = -3; z <= 3; z++)for (let i = 0; i < 70; i++) {
+                const t = i / 70 * 6.283;
+                P.push({ x: 16 * Math.sin(t) ** 3, y: -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)), z: z * 2.2, ch: txt[(i + z + 3) % txt.length], o: (i + z) % 2 })
+            }
+            let th = 0; const red = matchMedia('(prefers-reduced-motion:reduce)').matches;
+            (function f() {
+                x.clearRect(0, 0, 640, 640); th += .02; const cs = Math.cos(th), sn = Math.sin(th);
+                for (const p of P) {
+                    const X = p.x * cs + p.z * sn, Z = -p.x * sn + p.z * cs;
+                    x.globalAlpha = Math.max(.3, Math.min(1, .45 + .55 * (Z + 20) / 40)); x.fillStyle = p.o ? '#ffd23f' : '#ff8a3d'; x.font = '700 18px Fraunces,Georgia,serif'; x.fillText(p.ch, 320 + X * 15, 300 + p.y * 15)
+                }
+                x.globalAlpha = 1; if (!red) requestAnimationFrame(f)
+            })();
+        }
+
+        const ATRAS = { cuando: 'intro', vibe: 'cuando', ruleta: 'vibe', pregunta: 'ruleta', resumen: 'pregunta' };
+        Object.entries(ATRAS).forEach(([id, to]) => {
+            const b = document.createElement('button'); b.className = 'back'; b.textContent = '‹ Atrás';
+            b.onclick = () => { if (id === 'ruleta' && S.fi > 0) { S.fi--; fase() } else go(to) }; $('#' + id).prepend(b)
+        });
+        if (location.hash === '#fin') { go('fin'); corazon() }
+    </script>
 </body>
 
 </html>
